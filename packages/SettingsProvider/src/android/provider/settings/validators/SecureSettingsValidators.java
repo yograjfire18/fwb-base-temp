@@ -416,5 +416,7 @@ public class SecureSettingsValidators {
         VALIDATORS.put(Secure.DOZE_ON_CHARGE, BOOLEAN_VALIDATOR);
         VALIDATORS.put(Secure.QUICK_SETTINGS_TILES_ANIM_STYLE, ANY_INTEGER_VALIDATOR);
         VALIDATORS.put(Secure.QUICK_SETTINGS_TILES_ANIM_DURATION, ANY_INTEGER_VALIDATOR);
+        VALIDATORS.put(Secure.QUICK_SETTINGS_TILES_ANIM_INTERPOLATOR,
+                new InclusiveIntegerRangeValidator(0, 7));
     }
 }

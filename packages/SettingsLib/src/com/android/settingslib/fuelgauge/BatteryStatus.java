@@ -77,7 +77,6 @@ public class BatteryStatus {
         this.incompatibleCharger = Optional.empty();
     }
 
-
     public BatteryStatus(Intent batteryChangedIntent) {
         this(batteryChangedIntent, Optional.empty());
     }

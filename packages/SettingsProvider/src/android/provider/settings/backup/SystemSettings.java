@@ -118,5 +118,7 @@ public class SystemSettings {
         Settings.System.CUSTOM_NOTIFICATION_VIBRATION_PATTERN,
         Settings.System.BACK_GESTURE_HEIGHT,
         Settings.System.SENSOR_BLOCK,
+        Settings.System.NETWORK_TRAFFIC_STATE,
+        Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD
     };
 }

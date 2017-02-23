@@ -119,6 +119,7 @@ public class SystemSettings {
         Settings.System.BACK_GESTURE_HEIGHT,
         Settings.System.SENSOR_BLOCK,
         Settings.System.NETWORK_TRAFFIC_STATE,
-        Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD
+        Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD,
+        Settings.System.LOCK_HIDE_STATUS_BAR,
     };
 }

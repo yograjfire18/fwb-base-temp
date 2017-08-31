@@ -338,4 +338,6 @@ public interface CentralSurfaces extends Dumpable, LifecycleOwner {
     void onBrightnessChanged(boolean upOrCancel);
 
     void setBlockedGesturalNavigation(boolean blocked);
+
+    void toggleCameraFlash();
 }

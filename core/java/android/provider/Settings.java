@@ -6075,6 +6075,18 @@ public final class Settings {
         public static final String ZEN_ALLOW_LIGHTS = "allow_lights";
 
         /**
+         * Whether to show the clock in the right or left position or show it in the
+         * center
+         * 0: show the clock in the left position (LTR)
+         * 1: show the clock in the center
+         * 2: show the clock in the right position (LTR)
+         * default: 0
+         * 
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK = "status_bar_clock";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate

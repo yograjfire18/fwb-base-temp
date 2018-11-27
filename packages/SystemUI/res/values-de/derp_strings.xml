@@ -166,4 +166,8 @@
     <string name="screenrecord_skip_time_summary">Dreisekündige Wartezeit deaktivieren</string>
     <string name="screenrecord_hevc_switch_label">HEVC aktivieren</string>
     <string name="screenrecord_hevc_switch_summary">HEVC als Videocodec verwenden (effizienter)</string>
+
+    <!-- Kill button in notification guts -->
+    <string name="force_stop_dlg_title">Beenden erzwingen?</string>
+    <string name="force_stop_dlg_text">Das Beenden einer App zu erzwingen, kann zu unerwünschtem Verhalten führen.</string>
 </resources>

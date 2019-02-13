@@ -6796,6 +6796,16 @@ public final class Settings {
                 "notification_sound_vib_screen_on";
 
         /**
+         * @hide
+         */
+        public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR = "sysui_keyguard_show_battery_bar";
+
+        /**
+         * @hide
+         */
+        public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
@@ -6935,6 +6945,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SCREEN_FLASH_NOTIFICATION_COLOR);
             PRIVATE_SETTINGS.add(TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK);
             PRIVATE_SETTINGS.add(AUTO_BRIGHTNESS_ONE_SHOT);
+            PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
+            PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
         }
 
         /**

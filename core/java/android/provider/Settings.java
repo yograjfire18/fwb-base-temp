@@ -11842,6 +11842,12 @@ public final class Settings {
          */
         public static final String KEYBOARD_NO_NAVIGATION_BAR = "keyboard_no_navigation_bar";
 
+        /**
+         * Whether we should inverse layout direction for navigation bar.
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_INVERSE = "navigation_bar_inverse";
+
     }
 
     /**

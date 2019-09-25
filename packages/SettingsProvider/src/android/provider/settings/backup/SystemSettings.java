@@ -123,5 +123,6 @@ public class SystemSettings {
         Settings.System.HAPTIC_ON_POWER_MENU,
         Settings.System.NOTIFICATION_VIBRATION_PATTERN,
         Settings.System.CUSTOM_NOTIFICATION_VIBRATION_PATTERN,
+        Settings.System.BACK_GESTURE_HEIGHT,
     };
 }

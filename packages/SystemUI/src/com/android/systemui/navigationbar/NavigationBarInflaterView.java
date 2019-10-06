@@ -147,6 +147,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
     private boolean mIsHintDisabled;
     private boolean mIsKeyboardNavigationDisabled;
     private boolean mInverseLayout;
+    private boolean mUsingCustomLayout;
 
     public NavigationBarInflaterView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -211,6 +212,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
         Dependency.get(TunerService.class).addTunable(this, KEY_NAVIGATION_HINT);
         Dependency.get(TunerService.class).addTunable(this, KEY_KEYBOARD_NO_NAVIGATION);
         Dependency.get(TunerService.class).addTunable(this, NAV_BAR_INVERSE);
+        Dependency.get(TunerService.class).addTunable(this, NAV_BAR_VIEWS);
     }
 
     @Override
@@ -222,16 +224,19 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (KEY_NAVIGATION_HINT.equals(key) || KEY_KEYBOARD_NO_NAVIGATION.equals(key)) {
+        if (NAV_BAR_VIEWS.equals(key)) {
+            setNavigationBarLayout(newValue);
+        }
+        if (NAV_BAR_INVERSE.equals(key)) {
+            mInverseLayout = TunerService.parseIntegerSwitch(newValue, false);
+            updateLayoutInversion();
+        } else if (KEY_NAVIGATION_HINT.equals(key) || KEY_KEYBOARD_NO_NAVIGATION.equals(key)) {
             mIsHintDisabled = TunerService.parseIntegerSwitch(
                 Settings.Secure.getString(mContentResolver, KEY_NAVIGATION_HINT), false);
             mIsKeyboardNavigationDisabled = TunerService.parseIntegerSwitch(
                 Settings.Secure.getString(mContentResolver, KEY_KEYBOARD_NO_NAVIGATION), false);
             updateHint();
             onLikelyDefaultLayoutChange();
-        } else if (NAV_BAR_INVERSE.equals(key)) {
-            mInverseLayout = TunerService.parseIntegerSwitch(newValue, false);
-            updateLayoutInversion();
         }
     }
 
@@ -241,7 +246,17 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
         updateLayoutInversion();
     }
 
+    public void setNavigationBarLayout(String layoutValue) {
+        if (!Objects.equals(mCurrentLayout, layoutValue)) {
+            mUsingCustomLayout = layoutValue != null;
+            clearViews();
+            inflateLayout(layoutValue);
+        }
+    }
+
     public void onLikelyDefaultLayoutChange() {
+        // Don't override custom layouts
+        if (mUsingCustomLayout) return;
         // Reevaluate new layout
         final String newValue = getDefaultLayout();
         if (!Objects.equals(mCurrentLayout, newValue)) {

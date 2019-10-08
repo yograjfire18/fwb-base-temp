@@ -40,4 +40,8 @@
 
     <!-- Network traffic -->
     <dimen name="network_traffic_width">25sp</dimen>
+
+    <!-- OmniStyle custom headers -->
+    <dimen name="qs_header_image_height">142dp</dimen>
+    <dimen name="qs_header_image_fade_size">80dp</dimen>
 </resources>

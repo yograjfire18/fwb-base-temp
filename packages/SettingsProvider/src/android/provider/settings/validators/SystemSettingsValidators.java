@@ -267,5 +267,6 @@ public class SystemSettingsValidators {
         VALIDATORS.put(System.NETWORK_TRAFFIC_STATE, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.LOCK_HIDE_STATUS_BAR, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(System.FLASHLIGHT_ON_CALL, new InclusiveIntegerRangeValidator(0, 3));
     }
 }

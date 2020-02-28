@@ -238,6 +238,9 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
             updateHint();
             onLikelyDefaultLayoutChange();
         }
+        if (QuickStepContract.isGesturalMode(mNavBarMode)) {
+            setNavigationBarLayout(newValue);
+        }
     }
 
     @Override

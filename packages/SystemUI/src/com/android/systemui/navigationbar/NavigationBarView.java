@@ -143,6 +143,9 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
     private Context mLightContext;
     private int mLightIconColor;
     private int mDarkIconColor;
+    private KeyButtonDrawable mPowerButton;
+    private KeyButtonDrawable mVolumePlusButton;
+    private KeyButtonDrawable mVolumeMinusButton;
 
     private EdgeBackGestureHandler mEdgeBackGestureHandler;
     private DisplayTracker mDisplayTracker;
@@ -361,6 +364,9 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
         mButtonDispatchers.put(R.id.menu_container, mContextualButtonGroup);
         mButtonDispatchers.put(R.id.dpad_left, cursorLeftButton);
         mButtonDispatchers.put(R.id.dpad_right, cursorRightButton);
+        mButtonDispatchers.put(R.id.power, new ButtonDispatcher(R.id.power));
+        mButtonDispatchers.put(R.id.volume_minus, new ButtonDispatcher(R.id.volume_minus));
+        mButtonDispatchers.put(R.id.volume_plus, new ButtonDispatcher(R.id.volume_plus));
         mDeadZone = new DeadZone(this);
 
         final NavigationModeController controller = Dependency.get(NavigationModeController.class);
@@ -486,6 +492,18 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
         return mButtonDispatchers.get(R.id.dpad_right);
     }
 
+    public ButtonDispatcher getPowerButton() {
+        return mButtonDispatchers.get(R.id.power);
+    }
+
+    public ButtonDispatcher getVolumePlusButton() {
+        return mButtonDispatchers.get(R.id.volume_plus);
+    }
+
+    public ButtonDispatcher getVolumeMinusButton() {
+        return mButtonDispatchers.get(R.id.volume_minus);
+    }
+
     public SparseArray<ButtonDispatcher> getButtonDispatchers() {
         return mButtonDispatchers;
     }
@@ -524,6 +542,9 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
         if (orientationChange || densityChange || dirChange) {
             mBackIcon = getBackDrawable();
         }
+        mPowerButton = getDrawable(R.drawable.ic_sysbar_power);
+        mVolumePlusButton = getDrawable(R.drawable.ic_sysbar_volume_plus);
+        mVolumeMinusButton = getDrawable(R.drawable.ic_sysbar_volume_minus);
     }
 
     /**
@@ -677,6 +698,17 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
                 || (!QuickStepContract.isSwipeUpMode(mNavBarMode) && !disableCursorKeys);
         mContextualButtonGroup.setButtonVisibility(R.id.ime_switcher, !disableImeSwitcher);
 
+
+        if (getPowerButton() != null) {
+            getPowerButton().setImageDrawable(mPowerButton);
+        }
+        if (getVolumeMinusButton() != null) {
+            getVolumeMinusButton().setImageDrawable(mVolumeMinusButton);
+        }
+        if (getVolumePlusButton() != null) {
+            getVolumePlusButton().setImageDrawable(mVolumePlusButton);
+        }
+
         mBarTransitions.reapplyDarkIntensity();
 
         boolean disableHome = isGesturalMode(mNavBarMode)
@@ -722,6 +754,17 @@ public class NavigationBarView extends FrameLayout implements TunerService.Tunab
         getHomeHandle().setVisibility(disableHomeHandle || mHomeHandleForceHidden ? View.INVISIBLE : View.VISIBLE);
         getCursorLeftButton().setVisibility(disableCursorKeys  ? View.INVISIBLE : View.VISIBLE);
         getCursorRightButton().setVisibility(disableCursorKeys ? View.INVISIBLE : View.VISIBLE);
+
+        if (getPowerButton() != null) {
+            getPowerButton().setVisibility(View.VISIBLE);
+        }
+        if (getVolumeMinusButton() != null) {
+            getVolumeMinusButton().setVisibility(View.VISIBLE);
+        }
+        if (getVolumePlusButton() != null) {
+            getVolumePlusButton().setVisibility(View.VISIBLE);
+        }
+
         notifyActiveTouchRegions();
     }
 

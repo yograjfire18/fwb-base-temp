@@ -6124,7 +6124,6 @@ public final class Settings {
         public static final String TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK = "touchscreen_gesture_haptic_feedback";
 
         /**
-<<<<<<< HEAD
          * Whether the HighTouchPollingRate is activated or not.
          * 0 = off, 1 = on
          * @hide
@@ -6637,10 +6636,19 @@ public final class Settings {
          * 2: mm-mm-mm
          * 3: da-da-dzzz
          * 4: da-dzzz-da
+         * 5: custom
          * @hide
          */
         @Readable
         public static final String RINGTONE_VIBRATION_PATTERN = "ringtone_vibration_pattern";
+
+        /**
+         * Custom vibration pattern
+         * format: ms,ms,ms each a range from 0 to 1000 ms
+         * @hide
+         */
+        @Readable
+        public static final String CUSTOM_RINGTONE_VIBRATION_PATTERN = "custom_ringtone_vibration_pattern";
 
         /**
          * IMPORTANT: If you add a new public settings you also have to add it to

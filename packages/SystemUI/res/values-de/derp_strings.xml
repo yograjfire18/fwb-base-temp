@@ -7,6 +7,9 @@
     <!-- Status bar - icons -->
     <string name="status_bar_icons_title">Statusleistensymbole</string>
 
+    <!-- Name of the nfc status bar icon. -->
+    <string name="status_bar_nfc">NFC</string>
+
     <!-- Custom QS tiles -->
     <!-- Ambient display QS tile -->
     <string name="quick_settings_ambient_display_label">Inaktivitätsdisplay</string>

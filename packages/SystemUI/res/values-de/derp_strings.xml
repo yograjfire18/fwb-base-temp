@@ -122,4 +122,10 @@
     <!-- Screen record dialog -->
     <!-- Label for the switch to enable/disable keeping screen awake in screen recording -->
     <string name="screenrecord_keep_screen_awake_label">Den Bildschirm eingeschaltet lassen</string>
+
+    <!-- Screen record -->
+    <string name="screenrecord_stopdot_label">Stopppunkt anzeigen</string>
+    <string name="screenrecord_stopdot_summary">Gedrückthalten zum Verschieben</string>
+    <string name="screenrecord_lowquality_label">Geringere Qualität</string>
+    <string name="screenrecord_lowquality_summary">Zum Verringern der Dateigröße</string>
 </resources>

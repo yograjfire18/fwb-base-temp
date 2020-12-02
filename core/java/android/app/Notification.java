@@ -5775,7 +5775,7 @@ public class Notification implements Parcelable
             }
             contentView.setViewVisibility(R.id.app_name_text, View.VISIBLE);
             contentView.setTextViewText(R.id.app_name_text, loadHeaderAppName());
-            contentView.setTextColor(R.id.app_name_text, getSecondaryTextColor(p));
+            contentView.setTextColor(R.id.app_name_text, resolveAppNameTinting(p));
             return true;
         }
 
@@ -6582,6 +6582,20 @@ public class Notification implements Parcelable
         }
 
         /**
+         * Gets the secondary text color or use the app icon color for notification title.
+         */
+         private @ColorInt int resolveAppNameTinting(Notification.StandardTemplateParams p) {
+            if (mContext.getResources().getBoolean(R.bool.config_allowNotificationAppNameTinting)) {
+                if (mContext.getResources().getBoolean(R.bool.config_useCustomAppNameTextColor)) {
+                  return mContext.getColor(R.color.notification_text_default_color);
+                }
+                return getSmallIconColor(p);
+            } else {
+                return getSecondaryTextColor(p);
+            }
+        }
+
+        /**
          * Gets the standard action button color
          */
         private @ColorInt int getStandardActionColor(Notification.StandardTemplateParams p) {
@@ -6594,6 +6608,9 @@ public class Notification implements Parcelable
          * is the primary text color, otherwise it's the contrast-adjusted app-provided color.
          */
         private @ColorInt int getSmallIconColor(StandardTemplateParams p) {
+            if (mContext.getResources().getBoolean(R.bool.config_useCustomAppIconTinting)) {
+                return mContext.getColor(R.color.notification_icon_default_color);
+            }
             return getColors(p).getContrastColor();
         }
 

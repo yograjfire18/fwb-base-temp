@@ -75,4 +75,10 @@
     <dimen name="opa_line_x_trans_bg">30dp</dimen>
     <dimen name="opa_line_x_trans_ry">15dp</dimen>
     <dimen name="opa_line_y_translation">16dp</dimen>
+
+    <!-- Height of the landscape battery icon in the status bar. -->
+    <dimen name="status_bar_battery_icon_height_landscape">20dp</dimen>
+
+    <!-- Width of the landscape battery icon in the status bar. -->
+    <dimen name="status_bar_battery_icon_width_landscape">22dp</dimen>
 </resources>

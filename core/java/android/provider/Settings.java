@@ -6595,6 +6595,8 @@ public final class Settings {
          * 0 = protrait (default)
          * 1 = circle
          * 2 = text
+         * 3 = landscape
+         * 4 = landscape reversed
          * @hide
          */
         @Readable

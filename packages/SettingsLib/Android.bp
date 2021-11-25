@@ -49,6 +49,7 @@ android_library {
         "SettingsLibUsageProgressBarPreference",
         "SettingsLibUtils",
         "settingslib_flags_lib",
+        "VendorSupport-preference",
     ],
 
     plugins: ["androidx.room_room-compiler-plugin"],

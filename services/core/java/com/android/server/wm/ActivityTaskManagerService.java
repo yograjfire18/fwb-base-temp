@@ -289,6 +289,8 @@ import com.android.server.usage.AppStandbyInternal;
 import com.android.server.wallpaper.WallpaperManagerInternal;
 import com.android.wm.shell.Flags;
 
+import com.android.internal.util.derp.cutout.CutoutFullscreenController;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -807,6 +809,8 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
     private Set<Integer> mProfileOwnerUids = new ArraySet<Integer>();
 
     private SystemSensorManager mSystemSensorManager;
+
+    private CutoutFullscreenController mCutoutFullscreenController;
 
     public AppStandbyInternal mAppStandbyInternal;
 
@@ -7374,5 +7378,11 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
 
     static boolean isPip2ExperimentEnabled() {
         return Flags.enablePip2Implementation();
+    }
+
+    public boolean shouldForceCutoutFullscreen(String packageName) {
+        synchronized (mGlobalLock) {
+            return mCutoutFullscreenController.shouldForceCutoutFullscreen(packageName);
+        }
     }
 }

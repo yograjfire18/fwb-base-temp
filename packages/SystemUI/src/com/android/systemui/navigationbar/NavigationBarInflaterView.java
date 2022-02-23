@@ -97,6 +97,8 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
             Settings.Secure.KEYBOARD_NO_NAVIGATION_BAR;
     private static final String OVERLAY_NAVIGATION_HIDE_HINT =
             "org.derpfest.overlay.customization.navbar.nohint";
+    private static final String OVERLAY_LAUNCHER3_HIDE_HINT =
+            "org.derpfest.overlay.customization.launcher3.nohint";
     private static final String OVERLAY_KEYBOARD_HIDE_NAVIGATION =
             "org.derpfest.overlay.customization.navbar.keyboard.nonavbar";
 
@@ -296,6 +298,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
         final int userId = ActivityManager.getCurrentUser();
         try {
             iom.setEnabled(OVERLAY_NAVIGATION_HIDE_HINT, state, userId);
+            iom.setEnabled(OVERLAY_LAUNCHER3_HIDE_HINT, state, userId);
             iom.setEnabled(OVERLAY_KEYBOARD_HIDE_NAVIGATION,
                     state && mIsKeyboardNavigationDisabled, userId);
             if (state) {

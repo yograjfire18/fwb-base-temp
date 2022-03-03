@@ -275,6 +275,7 @@ public class SystemSettingsValidators {
                     }
                 });
         VALIDATORS.put(System.HAPTIC_ON_QS, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(System.HAPTIC_ON_VOLUME_SLIDER, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.HAPTIC_ON_STATUSBAR, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.HAPTIC_ON_SWITCH, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.HAPTIC_ON_SLIDER, BOOLEAN_VALIDATOR);

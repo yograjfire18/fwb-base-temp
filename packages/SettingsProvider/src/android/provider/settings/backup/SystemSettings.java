@@ -115,6 +115,7 @@ public class SystemSettings {
         Settings.System.RINGTONE_VIBRATION_PATTERN,
         Settings.System.CUSTOM_RINGTONE_VIBRATION_PATTERN,
         Settings.System.HAPTIC_ON_QS,
+        Settings.System.HAPTIC_ON_VOLUME_SLIDER,
         Settings.System.HAPTIC_ON_STATUSBAR,
         Settings.System.HAPTIC_ON_SWITCH,
         Settings.System.HAPTIC_ON_SLIDER,

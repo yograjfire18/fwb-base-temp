@@ -200,4 +200,7 @@
 
     <!-- Bootleg unneccesary gradient declaration | Just for our shishu bars -->
     <java-symbol type="color" name="bootleg_accent_gradient_end_color" />
+
+    <!-- Whether to enable lockscreen charging info settings -->
+    <java-symbol type="bool" name="config_enable_charging_info" />
 </resources>

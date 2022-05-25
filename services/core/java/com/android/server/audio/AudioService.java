@@ -1018,6 +1018,7 @@ public class AudioService extends IAudioService.Stub
     @GuardedBy("mSettingsLock")
     private boolean mRttEnabled = false;
 
+    private boolean mHasAlertSlider;
     private VibratorHelper mVibratorHelper;
 
     private AtomicBoolean mMasterMute = new AtomicBoolean(false);
@@ -1131,6 +1132,9 @@ public class AudioService extends IAudioService.Stub
 
         mUseVolumeGroupAliases = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_handleVolumeAliasesUsingVolumeGroups);
+
+        mHasAlertSlider = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasAlertSlider);
 
         mVibratorHelper = new VibratorHelper(mContext, mVibrator, true,
                 Settings.System.HAPTIC_FEEDBACK_ENABLED,
@@ -3893,6 +3897,11 @@ public class AudioService extends IAudioService.Stub
     private int getNewRingerMode(int stream, int index, int flags) {
         // setRingerMode does nothing if the device is single volume,so the value would be unchanged
         if (mIsSingleVolume) {
+            return getRingerModeExternal();
+        }
+
+        // Do not change ringer mode when device has Alert Slider
+        if (mHasAlertSlider) {
             return getRingerModeExternal();
         }
 

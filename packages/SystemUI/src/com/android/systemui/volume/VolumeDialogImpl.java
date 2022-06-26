@@ -175,7 +175,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     private static final int DRAWER_ANIMATION_DURATION_SHORT = 175;
     private static final int DRAWER_ANIMATION_DURATION = 250;
 
-    private static final int HAPTIC_MIN_GAP = 15;
+    private static final int HAPTIC_MIN_GAP = 50;
 
     /** Shows volume dialog show animation. */
     private static final String TYPE_SHOW = "show";
@@ -421,6 +421,8 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         mVibratorHelper = new VibratorHelper(mContext, true,
                 Settings.System.HAPTIC_FEEDBACK_ENABLED,
                 Settings.System.HAPTIC_ON_VOLUME_SLIDER);
+
+        mLastHapticTimestamp = -1;
 
         initDimens();
 
@@ -2871,11 +2873,12 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
             }
 
             long now = SystemClock.uptimeMillis();
-            if (progress == 0 || progress == 3000) {
+            if ((progress == 0 || progress == 3000) && mLastHapticTimestamp != -1) {
+                mLastHapticTimestamp = now;
                 mVibratorHelper.vibrateForDuration(100);
             } else if (now - mLastHapticTimestamp > HAPTIC_MIN_GAP) {
                 mLastHapticTimestamp = now;
-                final int duration = (int) (1 + 0.026 * progress);
+                final int duration = (int) (1 + 0.016 * progress);
                 mVibratorHelper.vibrateForDuration(duration);
             }
         }

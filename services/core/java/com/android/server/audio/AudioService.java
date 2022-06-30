@@ -217,6 +217,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.os.SomeArgs;
 import com.android.internal.util.DumpUtils;
 import com.android.internal.util.Preconditions;
+import com.android.internal.util.derp.VibratorHelper;
 import com.android.server.EventLogTags;
 import com.android.server.LocalServices;
 import com.android.server.SystemService;
@@ -1016,6 +1017,8 @@ public class AudioService extends IAudioService.Stub
     @GuardedBy("mSettingsLock")
     private boolean mRttEnabled = false;
 
+    private VibratorHelper mVibratorHelper;
+
     private AtomicBoolean mMasterMute = new AtomicBoolean(false);
 
     private DisplayManager mDisplayManager;
@@ -1127,6 +1130,10 @@ public class AudioService extends IAudioService.Stub
 
         mUseVolumeGroupAliases = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_handleVolumeAliasesUsingVolumeGroups);
+
+        mVibratorHelper = new VibratorHelper(mContext, mVibrator, true,
+                Settings.System.HAPTIC_FEEDBACK_ENABLED,
+                Settings.System.HAPTIC_ON_VOLUME_KEYS);
 
         // Initialize volume
         // Priority 1 - Android Property
@@ -3621,6 +3628,9 @@ public class AudioService extends IAudioService.Stub
         // it'll cause us to exit dnd
         if (!volumeAdjustmentAllowedByDnd(streamTypeAlias, flags)) {
             adjustVolume = false;
+            if (direction != AudioManager.ADJUST_SAME) {
+                mVibratorHelper.vibrateForEffectId(VibrationEffect.EFFECT_HEAVY_CLICK);
+            }
         }
         int oldIndex = mStreamStates[streamType].getIndex(device);
 
@@ -8812,7 +8822,11 @@ public class AudioService extends IAudioService.Stub
             synchronized (mSettingsLock) {
                 synchronized (VolumeStreamState.class) {
                     oldIndex = getIndex(device);
-                    index = getValidIndex(index, hasModifyAudioSettings);
+                    final int validIndex = getValidIndex(index, hasModifyAudioSettings);
+                    if (index != validIndex) {
+                        mVibratorHelper.vibrateForEffectId(VibrationEffect.EFFECT_HEAVY_CLICK);
+                    }
+                    index = validIndex;
                     if ((mStreamType == AudioSystem.STREAM_SYSTEM_ENFORCED) && mCameraSoundForced) {
                         index = mIndexMax;
                     }

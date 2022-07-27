@@ -1043,6 +1043,9 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
         if (intrinsicHeight != getIntrinsicHeight()) {
             notifyHeightChanged(false /* needsAnimation */);
         }
+
+        setTranslucentBackground(!pinned);
+
         if (pinned) {
             setAnimationRunning(true);
             mExpandedWhenPinned = false;

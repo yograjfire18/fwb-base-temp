@@ -357,4 +357,7 @@
 
   <!-- Whether to show options menu in apps targeting honeycomb -->
   <bool name="target_honeycomb_needs_options_menu">true</bool>
+
+  <!-- Mock Oplus LinearmotorVibratorService -->
+  <bool name="config_mockOplusLinearmotorVibratorService">false</bool>
 </resources>

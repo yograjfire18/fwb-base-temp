@@ -222,4 +222,7 @@
     <!-- Colored ls clock -->
     <java-symbol type="color" name="primary_text_material_light" />
     <java-symbol type="color" name="primary_text_material_dark" />
+
+    <!-- Mock Oplus LinearmotorVibratorService -->
+    <java-symbol type="bool" name="config_mockOplusLinearmotorVibratorService" />
 </resources>

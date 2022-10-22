@@ -45,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         >
         <com.android.systemui.statusbar.policy.Clock
             android:id="@+id/clock_right"
@@ -54,7 +55,7 @@
             android:singleLine="true"
             android:paddingStart="@dimen/status_bar_clock_starting_padding"
             android:paddingEnd="@dimen/status_bar_clock_end_padding"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|end"
             android:visibility="gone"
             systemui:isStatusBar="true"
         />

@@ -1876,14 +1876,13 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
     }
 
     private boolean hasVisibleNotifications() {
-        final boolean mediaVisible = mMediaDataManager.hasActiveMediaOrRecommendation()
-                && mMediaHierarchyManager.getShouldShowOnLockScreen();
         if (FooterViewRefactor.isEnabled()) {
             return mActiveNotificationsInteractor.getAreAnyNotificationsPresentValue()
                     || mMediaDataManager.hasActiveMediaOrRecommendation();
         } else {
             return mNotificationStackScrollLayoutController
-                    .getVisibleNotificationCount() != 0 || mediaVisible;
+                    .getVisibleNotificationCount() != 0
+                    || mMediaDataManager.hasActiveMediaOrRecommendation();
         }
     }
 

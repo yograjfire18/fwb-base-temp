@@ -456,5 +456,6 @@ public class SecureSettingsValidators {
         VALIDATORS.put(Secure.QUICK_SETTINGS_TILES_ANIM_INTERPOLATOR,
                 new InclusiveIntegerRangeValidator(0, 7));
         VALIDATORS.put(Secure.DOZE_SINGLE_TAP_GESTURE_AMBIENT, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(Secure.MEDIA_CONTROLS_ALWAYS_SHOW_TIME, BOOLEAN_VALIDATOR);
     }
 }

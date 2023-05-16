@@ -26,7 +26,6 @@ import android.app.ActivityThread;
 import android.app.AppOpsManager;
 import android.compat.annotation.UnsupportedAppUsage;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -268,22 +267,14 @@ public class Camera {
          * if the package name does not falls in this bucket
          */
         String packageName = ActivityThread.currentOpPackageName();
-    	if (packageName == null)
-    	    return true;
-        List<String> packageList = new ArrayList<>(Arrays.asList(
-                SystemProperties.get("vendor.camera.aux.packagelist", ",").split(",")));
-        List<String> packageExcludelist = new ArrayList<>(Arrays.asList(
-                SystemProperties.get("vendor.camera.aux.packageexcludelist", ",").split(",")));
+        if (packageName == null)
+            return true;
+        List<String> packageList = Arrays.asList(
+                SystemProperties.get("vendor.camera.aux.packagelist", packageName).split(","));
+        List<String> packageExcludelist = Arrays.asList(
+                SystemProperties.get("vendor.camera.aux.packageexcludelist", "").split(","));
 
-        // Append packages from resources
-        Resources res = ActivityThread.currentApplication().getResources();
-        packageList.addAll(Arrays.asList(res.getStringArray(
-                com.android.internal.R.array.config_cameraAuxPackageAllowList)));
-        packageExcludelist.addAll(Arrays.asList(res.getStringArray(
-                com.android.internal.R.array.config_cameraAuxPackageExcludeList)));
-
-        return (packageList.isEmpty() || packageList.contains(packageName)) &&
-                !packageExcludelist.contains(packageName);
+        return packageList.contains(packageName) && !packageExcludelist.contains(packageName);
     }
 
     /**
@@ -325,12 +316,12 @@ public class Camera {
      *    low-level failure).
      */
     public static void getCameraInfo(int cameraId, CameraInfo cameraInfo) {
-        boolean overrideToPortrait = CameraManager.shouldOverrideToPortrait(
-                ActivityThread.currentApplication().getApplicationContext());
-
         if (cameraId >= getNumberOfCameras()) {
             throw new RuntimeException("Unknown camera ID");
         }
+        boolean overrideToPortrait = CameraManager.shouldOverrideToPortrait(
+                ActivityThread.currentApplication().getApplicationContext());
+
         _getCameraInfo(cameraId, overrideToPortrait, cameraInfo);
         IBinder b = ServiceManager.getService(Context.AUDIO_SERVICE);
         IAudioService audioService = IAudioService.Stub.asInterface(b);
@@ -1660,11 +1651,7 @@ public class Camera {
                     } catch (RemoteException e) {
                         Log.e(TAG, "Audio service is unavailable for queries");
                     }
-                    try {
-                        _enableShutterSound(false);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Couldn't disable shutter sound");
-                    }
+                    _enableShutterSound(false);
                 } else {
                     enableShutterSound(mShutterSoundEnabledFromApp);
                 }

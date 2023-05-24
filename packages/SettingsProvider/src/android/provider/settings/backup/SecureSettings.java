@@ -264,6 +264,7 @@ public class SecureSettings {
         Settings.Secure.DOZE_ON_CHARGE,
         Settings.Secure.QUICK_SETTINGS_TILES_ANIM_STYLE,
         Settings.Secure.QUICK_SETTINGS_TILES_ANIM_DURATION,
-        Settings.Secure.QUICK_SETTINGS_TILES_ANIM_INTERPOLATOR
+        Settings.Secure.QUICK_SETTINGS_TILES_ANIM_INTERPOLATOR,
+        Settings.Secure.DOZE_SINGLE_TAP_GESTURE_AMBIENT
     };
 }

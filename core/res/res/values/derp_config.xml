@@ -324,4 +324,7 @@
 
   <!-- Whether device has physical tri state switch -->
   <bool name="config_hasAlertSlider">false</bool>
+
+  <!-- Default value for QS_TRANSPARENCY -->
+  <integer name="config_qs_transparency">85</integer>
 </resources>

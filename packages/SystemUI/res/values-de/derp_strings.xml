@@ -98,4 +98,9 @@
 
     <!-- Content description indicating that tapping the element will allow deleting the screenshot [CHAR LIMIT=NONE] -->
     <string name="screenshot_delete_description">Screenshot löschen</string>
+
+    <!-- Data usage info in QS footer -->
+    <string name="usage_data">heute verbraucht</string>
+    <string name="usage_data_default_suffix">Mobildaten</string>
+    <string name="usage_wifi_default_suffix">WLAN</string>
 </resources>

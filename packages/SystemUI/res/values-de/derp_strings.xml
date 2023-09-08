@@ -118,4 +118,8 @@
         =1 {# Gerät verbunden}
         other {# Geräte verbunden}
     }</string>
+
+    <!-- Screen record dialog -->
+    <!-- Label for the switch to enable/disable keeping screen awake in screen recording -->
+    <string name="screenrecord_keep_screen_awake_label">Den Bildschirm eingeschaltet lassen</string>
 </resources>

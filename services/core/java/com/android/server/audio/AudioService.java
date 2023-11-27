@@ -218,6 +218,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.os.SomeArgs;
 import com.android.internal.util.DumpUtils;
 import com.android.internal.util.Preconditions;
+import com.android.internal.util.derp.derpUtils;
 import com.android.internal.util.derp.VibratorHelper;
 import com.android.server.EventLogTags;
 import com.android.server.LocalServices;
@@ -1029,6 +1030,8 @@ public class AudioService extends IAudioService.Stub
     private boolean mRttEnabled = false;
 
     private boolean mHasAlertSlider;
+
+    private boolean mHasLinearMotorVibrator;
     private VibratorHelper mVibratorHelper;
 
     private AtomicBoolean mMasterMute = new AtomicBoolean(false);
@@ -1146,6 +1149,7 @@ public class AudioService extends IAudioService.Stub
         mHasAlertSlider = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_hasAlertSlider);
 
+        mHasLinearMotorVibrator = derpUtils.hasLinearMotorVibrator(mContext);
         mVibratorHelper = new VibratorHelper(mContext, mVibrator, true,
                 Settings.System.HAPTIC_FEEDBACK_ENABLED,
                 Settings.System.HAPTIC_ON_VOLUME_KEYS);
@@ -3643,7 +3647,7 @@ public class AudioService extends IAudioService.Stub
         // it'll cause us to exit dnd
         if (!volumeAdjustmentAllowedByDnd(streamTypeAlias, flags)) {
             adjustVolume = false;
-            if (direction != AudioManager.ADJUST_SAME) {
+            if (mHasLinearMotorVibrator && direction != AudioManager.ADJUST_SAME) {
                 mVibratorHelper.vibrateForEffectId(VibrationEffect.EFFECT_HEAVY_CLICK);
             }
         }
@@ -8907,7 +8911,7 @@ public class AudioService extends IAudioService.Stub
                 synchronized (VolumeStreamState.class) {
                     oldIndex = getIndex(device);
                     final int validIndex = getValidIndex(index, hasModifyAudioSettings);
-                    if (index != validIndex) {
+                    if (index != validIndex && mHasLinearMotorVibrator) {
                         mVibratorHelper.vibrateForEffectId(VibrationEffect.EFFECT_HEAVY_CLICK);
                     }
                     index = validIndex;

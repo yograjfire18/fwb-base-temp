@@ -134,6 +134,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.EmergencyAffordanceManager;
 import com.android.internal.util.ScreenshotHelper;
 import com.android.internal.util.UserIcons;
+import com.android.internal.util.derp.derpUtils;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.Dependency;
@@ -275,6 +276,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private boolean mIsWaitingForEcmExit = false;
     private boolean mHasTelephony;
     private boolean mHasVibrator;
+    private final boolean mHasLinearMotorVibrator;
     private final Vibrator mVibrator;
     private final boolean mShowSilentToggle;
     private final EmergencyAffordanceManager mEmergencyAffordanceManager;
@@ -458,6 +460,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 Settings.Global.getUriFor(Settings.Global.AIRPLANE_MODE_ON), true,
                 mAirplaneModeObserver);
         mVibrator = context.getSystemService(Vibrator.class);
+        mHasLinearMotorVibrator = derpUtils.hasLinearMotorVibrator(context);
         mHasVibrator = vibrator.hasVibrator();
 
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !resources.getBoolean(
@@ -895,7 +898,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     }
 
     private void doHapticFeedback(boolean longPress) {
-        if (!mHasVibrator ||
+        if (!mHasVibrator || !mHasLinearMotorVibrator ||
             Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.HAPTIC_FEEDBACK_ENABLED, 1, UserHandle.USER_CURRENT) == 0 ||
             Settings.System.getIntForUser(mContext.getContentResolver(),

@@ -127,6 +127,7 @@ import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.internal.jank.InteractionJankMonitor;
+import com.android.internal.util.derp.derpUtils;
 import com.android.internal.util.derp.VibratorHelper;
 import com.android.internal.view.RotationPolicy;
 import com.android.settingslib.Utils;
@@ -362,6 +363,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     private final Lazy<SecureSettings> mSecureSettings;
     private int mDialogTimeoutMillis = DIALOG_TIMEOUT_MILLIS;
 
+    private final boolean mHasLinearMotorVibrator;
     private final VibratorHelper mVibratorHelper;
     private long mLastHapticTimestamp;
 
@@ -457,6 +459,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 false, volumeTimeoutObserver);
         volumeTimeoutObserver.onChange(true);
 
+        mHasLinearMotorVibrator = derpUtils.hasLinearMotorVibrator(mContext);
         mVibratorHelper = new VibratorHelper(mContext, true,
                 Settings.System.HAPTIC_FEEDBACK_ENABLED,
                 Settings.System.HAPTIC_ON_VOLUME_SLIDER);
@@ -3093,6 +3096,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 }
             }
 
+            if (!mHasLinearMotorVibrator) return;
             long now = SystemClock.uptimeMillis();
             if ((progress == 0 || progress == 3000) && mLastHapticTimestamp != -1) {
                 mLastHapticTimestamp = now;

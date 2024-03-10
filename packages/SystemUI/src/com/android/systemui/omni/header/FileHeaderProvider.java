@@ -115,8 +115,8 @@ public class FileHeaderProvider implements
         File file = new File(mContext.getFilesDir(), HEADER_FILE_NAME);
         if (file.exists()) {
             if (DEBUG) Log.i(TAG, "Load header image");
-            final Bitmap image = BitmapFactory.decodeFile(file.getAbsolutePath());
-            mImage = new BitmapDrawable(mContext.getResources(), ImageHelper.resizeMaxDeviceSize(mContext, image));
+            final Bitmap image = ImageHelper.getCompressedBitmap(file.getAbsolutePath());
+            mImage = new BitmapDrawable(mContext.getResources(), image);
         }
     }
 

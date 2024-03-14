@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.icu.lang.UCharacter;
 import android.icu.text.DateTimePatternGenerator;
@@ -90,6 +91,9 @@ public class Clock extends TextView implements
     private static final String SHOW_SECONDS = "show_seconds";
     private static final String VISIBILITY = "visibility";
 
+    private static final String STATUSBAR_CLOCK_CHIP =
+            "system:" + Settings.System.STATUSBAR_CLOCK_CHIP;
+
     private final UserTracker mUserTracker;
     private final CommandQueue mCommandQueue;
     private int mCurrentUserId;
@@ -97,6 +101,7 @@ public class Clock extends TextView implements
     private boolean mClockAutoHide = false;
     private boolean mClockVisibleByPolicy = true;
     private boolean mClockVisibleByUser = getVisibility() == View.VISIBLE;
+    private boolean mClockBgOn;
 
     private boolean mAttached;
     private boolean mScreenReceiverRegistered;
@@ -239,7 +244,9 @@ public class Clock extends TextView implements
             // The receiver will return immediately if the view does not have a Handler yet.
             mBroadcastDispatcher.registerReceiverWithHandler(mIntentReceiver, filter,
                     Dependency.get(Dependency.TIME_TICK_HANDLER), UserHandle.ALL);
-            Dependency.get(TunerService.class).addTunable(this, CLOCK_SECONDS);
+            Dependency.get(TunerService.class).addTunable(this,
+                    CLOCK_SECONDS,
+                    STATUSBAR_CLOCK_CHIP);
             mContext.getContentResolver().registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_BAR_AM_PM),
                     false, mContentObserver);
@@ -414,6 +421,13 @@ public class Clock extends TextView implements
             mShowSeconds = TunerService.parseIntegerSwitch(newValue, false);
             updateShowSeconds();
         }
+        switch (key) {
+            case STATUSBAR_CLOCK_CHIP:
+                mClockBgOn = TunerService.parseInteger(newValue, 0) > 0;
+                break;
+            default:
+                break;
+         }
     }
 
     @Override
@@ -430,7 +444,7 @@ public class Clock extends TextView implements
     @Override
     public void onDarkChanged(ArrayList<Rect> areas, float darkIntensity, int tint) {
         mNonAdaptedColor = DarkIconDispatcher.getTint(areas, this, tint);
-        setTextColor(mNonAdaptedColor);
+        setTextColor(mClockBgOn ? Color.WHITE : mNonAdaptedColor);
     }
 
     @Override

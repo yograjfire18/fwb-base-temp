@@ -164,7 +164,7 @@ public class PixelPropsUtils {
                 if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", true)) {
                     propsToChange.putAll(propsToChangePixelXL);
                 } else {
-                    propsToChange.putAll(propsToChangePixel5a);
+                    propsToChange.putAll(propsToChangePixel8Pro);
                 }
             } else if (packageName.equals("com.netflix.mediaclient") && 
                         !SystemProperties.getBoolean("persist.sys.pixelprops.netflix", false)) {

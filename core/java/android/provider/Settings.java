@@ -12954,20 +12954,6 @@ public final class Settings {
         public static final String POWER_MENU_ACTIONS = "power_menu_actions";
 
         /**
-         * Whether to show the brightness slider in quick settings panel.
-         * 
-         * @hide
-         */
-        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
-
-        /**
-         * Whether to show the auto brightness icon in quick settings panel.
-         * 
-         * @hide
-         */
-        public static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
-
-        /**
          * The time in ms to keep the button backlight on after pressing a button.
          * A value of 0 will keep the buttons on for as long as the screen is on.
          * @hide

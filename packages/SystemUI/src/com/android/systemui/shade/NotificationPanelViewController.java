@@ -4622,9 +4622,6 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
                             /* alpha= */ 1f,
                             keyguardShowing ? View.VISIBLE : View.INVISIBLE);
                 }
-                if (keyguardShowing) {
-                    mKeyguardStatusBar.toggleContents(true);
-                }
                 if (keyguardShowing && oldState != mBarState) {
                     mQsController.hideQsImmediately();
                 }

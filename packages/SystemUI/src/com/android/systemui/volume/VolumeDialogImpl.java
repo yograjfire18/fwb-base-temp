@@ -130,6 +130,7 @@ import com.android.internal.jank.InteractionJankMonitor;
 import com.android.internal.util.derp.derpUtils;
 import com.android.internal.util.derp.VibratorHelper;
 import com.android.internal.view.RotationPolicy;
+import com.android.settingslib.media.flags.Flags;
 import com.android.settingslib.Utils;
 import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
@@ -1496,8 +1497,8 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
             mRoundedBorderBottom.setVisibility(!showSettings ? VISIBLE : GONE);
         }
         if (mSettingsView != null) {
-            mSettingsView.setVisibility(
-                    showSettings && (isMediaControllerAvailable() || isBluetoothA2dpConnected())
+            mSettingsView.setVisibility(showSettings && (isMediaControllerAvailable() ||
+                    (Flags.useMediaRouter2ForInfoMediaManager() && isBluetoothA2dpConnected()))
                             ? VISIBLE
                             : GONE);
         }
@@ -1506,7 +1507,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 Events.writeEvent(Events.EVENT_SETTINGS_CLICK);
                 String packageName = isMediaControllerAvailable()
                         ? getActiveLocalMediaController().getPackageName()
-                        : "";
+                        : null;
                 mMediaOutputDialogFactory.create(packageName, true, mDialogView);
                 dismissH(DISMISS_REASON_SETTINGS_CLICKED);
             });

@@ -95,8 +95,6 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
             Settings.Secure.NAVIGATION_BAR_HINT;
     private static final String KEY_KEYBOARD_NO_NAVIGATION =
             Settings.Secure.KEYBOARD_NO_NAVIGATION_BAR;
-    private static final String KEY_NAV_BAR_INVERSE =
-            Settings.Secure.NAVIGATION_BAR_INVERSE;
     private static final String OVERLAY_NAVIGATION_HIDE_HINT =
             "org.derpfest.overlay.customization.navbar.nohint";
     private static final String OVERLAY_KEYBOARD_HIDE_NAVIGATION =
@@ -226,7 +224,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
                 Settings.Secure.getString(mContentResolver, KEY_KEYBOARD_NO_NAVIGATION), false);
             updateHint();
             onLikelyDefaultLayoutChange();
-        } else if (KEY_NAV_BAR_INVERSE.equals(key)) {
+        } else if (NAV_BAR_INVERSE.equals(key)) {
             mInverseLayout = TunerService.parseIntegerSwitch(newValue, false);
             updateLayoutInversion();
         }

@@ -76,9 +76,6 @@
     -->
     <string name="config_screenRecorderAVCProfileLevel" translatable="false">4.2</string>
 
-    <!-- Whether to enable edge light only when the device face down -->
-    <bool name="config_showEdgeLightOnlyWhenFaceDown">false</bool>
-
     <!-- Whether to enable burn-in protection for statusbar and navbar -->
     <bool name="config_statusBarBurnInProtection">@*android:bool/config_enableBurnInProtection</bool>
 

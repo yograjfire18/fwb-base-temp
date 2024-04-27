@@ -66,7 +66,9 @@ public class ClockController {
                     mClockPosition = Settings.System.getInt(mContext.getContentResolver(),
                             Settings.System.STATUS_BAR_CLOCK, CLOCK_POSITION_LEFT);
                 }
-                updateActiveClock();
+                mContext.getMainExecutor().execute(() -> {
+                    updateActiveClock();
+                });
             }
         };
         mContext.getContentResolver().registerContentObserver(iconHideList, false, contentObserver);

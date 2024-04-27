@@ -168,6 +168,7 @@ public class Clock extends TextView implements
                         mDateTimePatternGenerator = null;
                         mContext.getMainExecutor().execute(() -> {
                             updateClock(true);
+                            updateClockVisibility();
                         });
                     } else if (Settings.System.getUriFor(
                             Settings.System.STATUS_BAR_CLOCK_AUTO_HIDE).equals(uri)) {
@@ -261,9 +262,11 @@ public class Clock extends TextView implements
         mDateTimePatternGenerator = null;
 
         // Make sure we update to the current time
-        updateClock();
-        updateClockVisibility();
         updateShowSeconds();
+        mContext.getMainExecutor().execute(() -> {
+            updateClock();
+            updateClockVisibility();
+        });
     }
 
     @Override

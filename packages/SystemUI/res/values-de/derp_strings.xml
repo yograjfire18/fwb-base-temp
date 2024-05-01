@@ -156,16 +156,16 @@
     <string name="screenrecord_delete_description">Bildschirmaufzeichnung gelöscht</string>
 
     <!-- Screen record -->
-    <string name="screenrecord_stopdot_label">Stopppunkt anzeigen</string>
-    <string name="screenrecord_stopdot_summary">Gedrückthalten zum Verschieben</string>
-    <string name="screenrecord_lowquality_label">Geringere Qualität</string>
+    <string name="screenrecord_stopdot_label">Stopp-Punkt anzeigen</string>
+    <string name="screenrecord_stopdot_summary">Gedrückt halten zum Verschieben</string>
+    <string name="screenrecord_lowquality_label">Niedrigere Qualität</string>
     <string name="screenrecord_lowquality_summary">Zum Verringern der Dateigröße</string>
     <string name="screenrecord_longer_timeout_switch_label">Max. Dateigröße erhöhen</string>
-    <string name="screenrecord_longer_timeout_switch_summary">Größe der Aufnahme auf 15 GB begrenzen</string>
+    <string name="screenrecord_longer_timeout_switch_summary">Aufnahmegröße auf 15 GB begrenzen</string>
     <string name="screenrecord_skip_time_label">Timer überspringen</string>
     <string name="screenrecord_skip_time_summary">Dreisekündige Wartezeit deaktivieren</string>
-    <string name="screenrecord_hevc_switch_label">HEVC aktivieren</string>
-    <string name="screenrecord_hevc_switch_summary">HEVC als Videocodec verwenden (effizienter)</string>
+    <string name="screenrecord_hevc_switch_label">HEVC-Kodierung</string>
+    <string name="screenrecord_hevc_switch_summary">Effizienteren HEVC-Codec verwenden</string>
 
     <!-- Kill button in notification guts -->
     <string name="force_stop_dlg_title">Beenden erzwingen?</string>

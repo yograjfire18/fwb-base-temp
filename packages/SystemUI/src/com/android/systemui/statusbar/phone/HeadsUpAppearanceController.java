@@ -289,7 +289,7 @@ public class HeadsUpAppearanceController extends ViewController<HeadsUpStatusBar
                 mView.setVisibility(View.VISIBLE);
                 show(mView);
                 if (!isRightClock) {
-                    hide(mClockView, View.INVISIBLE);
+                    hide(mClockView, View.GONE);
                 }
                 mOperatorNameViewOptional.ifPresent(view -> hide(view, View.INVISIBLE));
                 if (mLeftLogo.getVisibility() != View.GONE)

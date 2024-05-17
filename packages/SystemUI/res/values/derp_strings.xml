@@ -189,6 +189,8 @@
     <string name="navbar_editor_summary">Configure navigaton bar</string>
     <!-- SysUI Tuner: Adjust button width dialog title [CHAR LIMIT=60] -->
     <string name="adjust_button_width">Adjust button width</string>
+    <string name="navbar_force_menu_key_title">Force menu key</string>
+    <string name="navbar_force_menu_key_summary">Always show the menu key regardless of the context</string>
 
     <!-- QuickSettings: InternetDialog: Summary for how many devices are connected to the hotspot [CHAR LIMIT=NONE] -->
      <string name="quick_settings_internet_hotspot_summary_num_devices">{count, plural,

@@ -168,6 +168,8 @@
     <string name="navbar_editor_summary">Navigationsleiste bearbeiten</string>
     <!-- SysUI Tuner: Adjust button width dialog title [CHAR LIMIT=60] -->
     <string name="adjust_button_width">Buttonbreite anpassen</string>
+    <string name="navbar_force_menu_key_title">Menütaste erzwingen</string>
+    <string name="navbar_force_menu_key_summary">Die Menütaste immer anzeigen, unabhängig vom Kontext</string>
 
     <!-- QuickSettings: InternetDialog: Summary for how many devices are connected to the hotspot [CHAR LIMIT=NONE] -->
      <string name="quick_settings_internet_hotspot_summary_num_devices">{count, plural,

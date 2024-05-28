@@ -16,9 +16,16 @@
  */
 package com.android.internal.derp.hardware;
 
-import android.annotation.SystemService;
+import android.content.Context;
+import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.util.Log;
+import android.util.Range;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.android.internal.derp.app.LineageContextConstants;
 
@@ -35,7 +42,6 @@ import com.android.internal.derp.app.LineageContextConstants;
  * features such as CABC, ACO and color enhancement are also
  * managed by LiveDisplay.
  */
-@SystemService(LineageContextConstants.LINEAGE_LIVEDISPLAY_SERVICE)
 public class LiveDisplayManager {
 
     /**
@@ -137,15 +143,54 @@ public class LiveDisplayManager {
 
     private static final String TAG = "LiveDisplay";
 
+    private final Context mContext;
     private LiveDisplayConfig mConfig;
 
+    private static LiveDisplayManager sInstance;
     private static ILiveDisplayService sService;
 
     /**
      * @hide to prevent subclassing from outside of the framework
      */
-    public LiveDisplayManager(ILiveDisplayService service) {
-        sService = service;
+    private LiveDisplayManager(Context context) {
+        Context appContext = context.getApplicationContext();
+        if (appContext != null) {
+            mContext = appContext;
+        } else {
+            mContext = context;
+        }
+        sService = getService();
+
+        if (!checkService()) {
+            Log.wtf(TAG, "Unable to get LiveDisplayService. The service either" +
+                    " crashed, was not started, or the interface has been called to early in" +
+                    " SystemServer init");
+        }
+    }
+
+    /**
+     * Get or create an instance of the {@link com.android.internal.derp.hardware.LiveDisplayManager}
+     * @param context
+     * @return {@link LiveDisplayManager}
+     */
+    public synchronized static LiveDisplayManager getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new LiveDisplayManager(context);
+        }
+        return sInstance;
+    }
+
+    /** @hide */
+    public static ILiveDisplayService getService() {
+        if (sService != null) {
+            return sService;
+        }
+        IBinder b = ServiceManager.getService(LineageContextConstants.LINEAGE_LIVEDISPLAY_SERVICE);
+        if (b != null) {
+            sService = ILiveDisplayService.Stub.asInterface(b);
+            return sService;
+        }
+        return null;
     }
 
     /**

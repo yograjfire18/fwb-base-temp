@@ -19,8 +19,8 @@ package com.android.internal.derp.hardware;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.android.internal.derp.os.Concierge;
-import com.android.internal.derp.os.Concierge.ParcelInfo;
+import com.android.internal.derp.util.Concierge;
+import com.android.internal.derp.util.Concierge.ParcelInfo;
 
 /**
  * Display Modes API
@@ -48,6 +48,7 @@ public class DisplayMode implements Parcelable {
     private DisplayMode(Parcel parcel) {
         // Read parcelable version via the Concierge
         ParcelInfo parcelInfo = Concierge.receiveParcel(parcel);
+        int parcelableVersion = parcelInfo.getParcelVersion();
 
         // temp vars
         int tmpId = -1;
@@ -76,7 +77,6 @@ public class DisplayMode implements Parcelable {
         // Tell the concierge to prepare the parcel
         ParcelInfo parcelInfo = Concierge.prepareParcel(out);
 
-        // ==== BOYSENBERRY =====
         out.writeInt(id);
         if (name != null) {
             out.writeInt(1);

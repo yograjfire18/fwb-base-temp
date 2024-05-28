@@ -21,7 +21,6 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
-import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.MathUtils;
 import android.util.Range;
@@ -35,7 +34,8 @@ import java.util.BitSet;
 
 import com.android.internal.derp.hardware.LineageHardwareManager;
 import com.android.internal.derp.hardware.LiveDisplayManager;
-import com.android.internal.util.derp.ColorUtils;
+import android.provider.Settings;
+import com.android.internal.derp.util.ColorUtils;
 
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_AUTO;
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_DAY;
@@ -95,7 +95,7 @@ public class ColorTemperatureController extends LiveDisplayFeature {
                 mContext.getResources().getInteger(
                         com.android.internal.R.integer.config_maxColorTemperature));
 
-        mColorBalanceCurve = com.android.internal.util.derp.MathUtils.powerCurve(
+        mColorBalanceCurve = com.android.internal.derp.util.MathUtils.powerCurve(
                 mColorTemperatureRange.getLower(),
                 mDefaultDayTemperature,
                 mColorTemperatureRange.getUpper());
@@ -258,7 +258,7 @@ public class ColorTemperatureController extends LiveDisplayFeature {
      * correct configuration at the device level!
      */
     private int mapColorTemperatureToBalance(int temperature) {
-        double z = com.android.internal.util.derp.MathUtils.powerCurveToLinear(mColorBalanceCurve, temperature);
+        double z = com.android.internal.derp.util.MathUtils.powerCurveToLinear(mColorBalanceCurve, temperature);
         return Math.round(MathUtils.lerp((float)mColorBalanceRange.getLower(),
                 (float)mColorBalanceRange.getUpper(), (float)z));
     }

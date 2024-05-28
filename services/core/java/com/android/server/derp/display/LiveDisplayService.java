@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 The CyanogenMod Project
- *               2017-2019,2021 The LineageOS Project
+ *               2019-2021 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -31,7 +32,6 @@ import android.os.PowerManagerInternal;
 import android.os.PowerSaveState;
 import android.os.Process;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.view.Display;
 
 import com.android.server.LocalServices;
@@ -54,10 +54,14 @@ import com.android.internal.derp.app.LineageContextConstants;
 import com.android.internal.derp.hardware.HSIC;
 import com.android.internal.derp.hardware.ILiveDisplayService;
 import com.android.internal.derp.hardware.LiveDisplayConfig;
+import android.provider.Settings;
 
+import static com.android.internal.derp.hardware.LiveDisplayManager.FEATURE_MANAGED_OUTDOOR_MODE;
+import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_DAY;
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_FIRST;
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_LAST;
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_OFF;
+import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_OUTDOOR;
 
 /**
  * LiveDisplay is an advanced set of features for improving
@@ -203,6 +207,10 @@ public class LiveDisplayService extends SystemService {
             }
 
             updateFeatures(ALL_CHANGED);
+
+            Intent intent = new Intent("lineageos.intent.action.INITIALIZE_LIVEDISPLAY");
+            intent.setPackage("com.android.systemui");
+            mContext.sendBroadcastAsUser(intent, UserHandle.SYSTEM);
         }
     }
 
@@ -530,9 +538,11 @@ public class LiveDisplayService extends SystemService {
         }
         if (counter == 0) {
             //show the notification and don't come back here
-            final Intent intent = new Intent("lineageos.settings.LIVEDISPLAY_SETTINGS");
-            PendingIntent result = PendingIntent.getActivity(mContext, 0, intent,
-                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            final Intent intent = new Intent("com.android.settings.LIVEDISPLAY_SETTINGS");
+            PendingIntent result = PendingIntent.getActivity(
+                    mContext, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT |
+                    PendingIntent.FLAG_IMMUTABLE);
             Notification.Builder builder = new Notification.Builder(mContext)
                     .setContentTitle(mContext.getResources().getString(
                             com.android.internal.R.string.live_display_title))

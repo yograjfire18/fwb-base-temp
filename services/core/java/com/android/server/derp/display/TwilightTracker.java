@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- *               2017-2018,2021 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +37,7 @@ import android.util.Slog;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -69,8 +68,7 @@ public final class TwilightTracker {
     public TwilightTracker(Context context) {
         mContext = context.createAttributionContext(TAG);
         mAlarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        final Context contextTag = mContext.createAttributionContext("twilight");
-        mLocationManager = (LocationManager) contextTag.getSystemService(
+        mLocationManager = (LocationManager) mContext.getSystemService(
                 Context.LOCATION_SERVICE);
         mLocationHandler = new LocationHandler();
 
@@ -297,25 +295,20 @@ public final class TwilightTracker {
             }
         }
 
-        private Location getLastKnownLocation() {
-            List<String> providers = mLocationManager.getAllProviders();
-            Location bestLocation = null;
-            for (String provider : providers) {
-                Location lastKnownLocation = mLocationManager.getLastKnownLocation(provider);
-                if (lastKnownLocation != null) {
-                    if (bestLocation == null ||
-                            bestLocation.getElapsedRealtimeNanos() <
-                            lastKnownLocation.getElapsedRealtimeNanos()) {
-                        bestLocation = lastKnownLocation;
-                    }
+        private void retrieveLocation() {
+            Location location = null;
+            final Iterator<String> providers =
+                    mLocationManager.getProviders(new Criteria(), true).iterator();
+            while (providers.hasNext()) {
+                final Location lastKnownLocation =
+                        mLocationManager.getLastKnownLocation(providers.next());
+                // pick the most recent location
+                if (location == null || (lastKnownLocation != null &&
+                        location.getElapsedRealtimeNanos() <
+                                lastKnownLocation.getElapsedRealtimeNanos())) {
+                    location = lastKnownLocation;
                 }
             }
-            return bestLocation;
-        }
-
-
-        private void retrieveLocation() {
-            Location location = getLastKnownLocation();
 
             // In the case there is no location available (e.g. GPS fix or network location
             // is not available yet), the longitude of the location is estimated using the timezone,

@@ -18,6 +18,9 @@ package com.android.internal.derp.hardware;
 
 import android.util.Range;
 
+import com.android.internal.derp.hardware.DisplayMode;
+import com.android.internal.derp.hardware.HSIC;
+
 import java.util.ArrayList;
 
 class HIDLHelper {

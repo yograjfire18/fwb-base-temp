@@ -18,11 +18,11 @@ package com.android.server.derp.display;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Range;
 import android.util.Slog;
 import android.util.SparseArray;
+import android.view.Display;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import com.android.internal.derp.hardware.LineageHardwareManager;
 import com.android.internal.derp.hardware.DisplayMode;
 import com.android.internal.derp.hardware.HSIC;
 import com.android.internal.derp.hardware.LiveDisplayManager;
+import android.provider.Settings;
 
 public class PictureAdjustmentController extends LiveDisplayFeature {
 
@@ -51,10 +52,7 @@ public class PictureAdjustmentController extends LiveDisplayFeature {
 
         boolean usePA = mHardware.isSupported(LineageHardwareManager.FEATURE_PICTURE_ADJUSTMENT);
         if (usePA) {
-            final List<Range<Float>> r = mHardware.getPictureAdjustmentRanges();
-            if (r != null) {
-                mRanges.addAll(r);
-            }
+            mRanges.addAll(mHardware.getPictureAdjustmentRanges());
             if (mRanges.size() < 4) {
                 usePA = false;
             } else {

@@ -8195,15 +8195,18 @@
 
     <!-- LineageHardware -->
     <protected-broadcast android:name="lineageos.intent.action.INITIALIZE_LINEAGE_HARDWARE" />
-    <protected-broadcast android:name="lineageos.platform.intent.action.UPDATE_TWILIGHT_STATE" />
 
     <!-- LineageHealth -->
     <protected-broadcast android:name="lineageos.platform.intent.action.CHARGING_CONTROL_CANCEL_ONCE" />
+    <!-- Live display -->
+    <protected-broadcast android:name="lineageos.platform.intent.action.UPDATE_TWILIGHT_STATE" />
+    <protected-broadcast android:name="lineageos.intent.action.INITIALIZE_LIVEDISPLAY" />
 
     <!-- @hide -->
     <permission android:name="lineageos.permission.HARDWARE_ABSTRACTION_ACCESS"
                 android:protectionLevel="signature|privileged" />
-    <!-- @hide -->
+
+    <!-- @hide  -->
     <permission android:name="lineageos.permission.MANAGE_LIVEDISPLAY"
                 android:protectionLevel="signature|privileged" />
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.derp.os;
+package com.android.internal.derp.util;
 
 import android.os.Parcel;
 
@@ -62,7 +62,7 @@ public final class Concierge {
      * {@link LINEAGE_VERSION_CODES}
      * @hide
      */
-    public static final int PARCELABLE_VERSION = 1;
+    public static final int PARCELABLE_VERSION = 9;
 
     /**
      * Tell the concierge to receive our parcel, so we can get information from it.

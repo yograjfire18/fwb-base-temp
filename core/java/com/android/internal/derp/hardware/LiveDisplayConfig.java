@@ -16,7 +16,6 @@
 package com.android.internal.derp.hardware;
 
 import static com.android.internal.derp.hardware.LiveDisplayManager.FEATURE_COLOR_BALANCE;
-import static com.android.internal.derp.hardware.LiveDisplayManager.FEATURE_PICTURE_ADJUSTMENT;
 import static com.android.internal.derp.hardware.LiveDisplayManager.FEATURE_FIRST;
 import static com.android.internal.derp.hardware.LiveDisplayManager.FEATURE_LAST;
 import static com.android.internal.derp.hardware.LiveDisplayManager.MODE_FIRST;
@@ -31,8 +30,8 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
-import com.android.internal.derp.os.Concierge;
-import com.android.internal.derp.os.Concierge.ParcelInfo;
+import com.android.internal.derp.util.Concierge;
+import com.android.internal.derp.util.Concierge.ParcelInfo;
 
 /**
  * Holder class for LiveDisplay static configuration.
@@ -95,6 +94,7 @@ public class LiveDisplayConfig implements Parcelable {
     private LiveDisplayConfig(Parcel parcel) {
         // Read parcelable version via the Concierge
         ParcelInfo parcelInfo = Concierge.receiveParcel(parcel);
+        int parcelableVersion = parcelInfo.getParcelVersion();
 
         // temp vars
         long capabilities = 0;
@@ -159,10 +159,10 @@ public class LiveDisplayConfig implements Parcelable {
         sb.append(" defaultCABC=").append(mDefaultCABC);
         sb.append(" defaultColorEnhancement=").append(mDefaultColorEnhancement);
         sb.append(" colorTemperatureRange=").append(mColorTemperatureRange);
-        if (mCapabilities.get(FEATURE_COLOR_BALANCE)) {
+        if (mCapabilities.get(LiveDisplayManager.FEATURE_COLOR_BALANCE)) {
             sb.append(" colorBalanceRange=").append(mColorBalanceRange);
         }
-        if (mCapabilities.get(FEATURE_PICTURE_ADJUSTMENT)) {
+        if (mCapabilities.get(LiveDisplayManager.FEATURE_PICTURE_ADJUSTMENT)) {
             sb.append(" hueRange=").append(mHueRange);
             sb.append(" saturationRange=").append(mSaturationRange);
             sb.append(" intensityRange=").append(mIntensityRange);

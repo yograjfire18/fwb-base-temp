@@ -131,7 +131,6 @@ public class MainSwitchBar extends LinearLayout implements OnCheckedChangeListen
 
     @Override
     public boolean performClick() {
-        final boolean ret = mSwitch.performClick();
         final boolean hapticEnabled = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) != 0;
         final boolean switchHapticEnabled = Settings.System.getInt(mContext.getContentResolver(),
@@ -139,7 +138,8 @@ public class MainSwitchBar extends LinearLayout implements OnCheckedChangeListen
         if (hapticEnabled && switchHapticEnabled) {
             mVibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
         }
-        return ret;
+        mSwitch.performClick();
+        return super.performClick();
     }
 
     /**

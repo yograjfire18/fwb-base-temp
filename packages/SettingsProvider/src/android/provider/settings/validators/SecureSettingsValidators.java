@@ -471,5 +471,7 @@ public class SecureSettingsValidators {
         VALIDATORS.put(Secure.DOZE_SINGLE_TAP_GESTURE_AMBIENT, BOOLEAN_VALIDATOR);
         VALIDATORS.put(Secure.MEDIA_CONTROLS_ALWAYS_SHOW_TIME, BOOLEAN_VALIDATOR);
         VALIDATORS.put(Secure.MEDIA_CONTROLS_SQUIGGLE, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(Secure.MEDIA_CONTROLS_ACTIONS,
+                new DiscreteValueValidator(new String[] {"0", "1", "2", "3", "4", "5"}));
     }
 }

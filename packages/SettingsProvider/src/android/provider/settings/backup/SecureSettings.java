@@ -277,6 +277,7 @@ public class SecureSettings {
         Settings.Secure.QUICK_SETTINGS_TILES_ANIM_INTERPOLATOR,
         Settings.Secure.DOZE_SINGLE_TAP_GESTURE_AMBIENT,
         Settings.Secure.MEDIA_CONTROLS_ALWAYS_SHOW_TIME,
+        Settings.Secure.MEDIA_CONTROLS_TIME_AS_NEXT,
         Settings.Secure.MEDIA_CONTROLS_SQUIGGLE,
         Settings.Secure.MEDIA_CONTROLS_ACTIONS,
     };

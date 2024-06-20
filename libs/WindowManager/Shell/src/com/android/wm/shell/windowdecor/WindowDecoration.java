@@ -46,7 +46,6 @@ import android.window.SurfaceSyncGroup;
 import android.window.TaskConstants;
 import android.window.WindowContainerTransaction;
 
-import com.android.internal.policy.ScreenDecorationsUtils;
 import com.android.wm.shell.ShellTaskOrganizer;
 import com.android.wm.shell.common.DisplayController;
 import com.android.wm.shell.desktopmode.DesktopModeStatus;
@@ -333,8 +332,8 @@ public abstract class WindowDecoration<T extends View & TaskFocusStateConsumer>
                 mTmpColor[2] = (float) Color.blue(backgroundColorInt) / 255.f;
                 startT.setColor(mTaskSurface, mTmpColor);
             }
-            startT.setCornerRadius(mTaskSurface, cornerRadiusPixels);
-            finishT.setCornerRadius(mTaskSurface, cornerRadiusPixels);
+            startT.setCornerRadius(mTaskSurface, params.mCornerRadius);
+            finishT.setCornerRadius(mTaskSurface, params.mCornerRadius);
         } else if (!DesktopModeStatus.isVeiledResizeEnabled()) {
             startT.unsetColor(mTaskSurface);
         }

@@ -31,7 +31,6 @@ import android.os.SystemClock;
 import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.Slog;
@@ -305,8 +304,8 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
         } else if (KeyEvent.KEYCODE_SYSTEM_NAVIGATION_DOWN == key.getKeyCode()) {
             mMetricsLogger.action(MetricsEvent.ACTION_SYSTEM_NAVIGATION_KEY_DOWN);
             if (mShadeViewController.isFullyCollapsed()) {
-                if (mVibrateOnOpening && Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.HAPTIC_ON_STATUSBAR, 1, UserHandle.USER_CURRENT) != 0) {
+                if (mVibrateOnOpening && Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.HAPTIC_ON_STATUSBAR, 1) != 0) {
                     vibrateOnNavigationKeyDown();
                 }
                 mShadeViewController.expand(true /* animate */);

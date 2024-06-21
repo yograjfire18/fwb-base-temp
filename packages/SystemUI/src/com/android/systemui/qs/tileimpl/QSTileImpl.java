@@ -14,9 +14,6 @@
 
 package com.android.systemui.qs.tileimpl;
 
-import static android.provider.Settings.System.HAPTIC_FEEDBACK_ENABLED;
-import static android.provider.Settings.System.HAPTIC_ON_QS;
-
 import static androidx.lifecycle.Lifecycle.State.CREATED;
 import static androidx.lifecycle.Lifecycle.State.DESTROYED;
 import static androidx.lifecycle.Lifecycle.State.RESUMED;
@@ -45,6 +42,8 @@ import android.os.Message;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.ArraySet;
 import android.util.Log;
@@ -61,7 +60,6 @@ import com.android.internal.jank.InteractionJankMonitor;
 import com.android.internal.logging.InstanceId;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEventLogger;
-import com.android.internal.util.derp.VibratorHelper;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedLockUtilsInternal;
 import com.android.systemui.Dumpable;
@@ -162,7 +160,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
      */
     abstract protected void handleUpdateState(TState state, Object arg);
 
-    private final VibratorHelper mVibratorHelper;
+    protected Vibrator mVibrator;
 
     /**
      * Declare the category of this tile.
@@ -214,9 +212,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         resetStates();
         mUiHandler.post(() -> mLifecycle.setCurrentState(CREATED));
 
-        mVibratorHelper = new VibratorHelper(mContext,
-                HAPTIC_FEEDBACK_ENABLED,
-                HAPTIC_ON_QS);
+        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     protected final void resetStates() {
@@ -304,7 +300,12 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
         if (!mFalsingManager.isFalseTap(FalsingManager.LOW_PENALTY)) {
             handleClick(ACTION_QS_CLICK, QSEvent.QS_ACTION_CLICK, H.CLICK, eventId, view);
         }
-        mVibratorHelper.vibrateForEffectId(VibrationEffect.EFFECT_CLICK);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) != 0 &&
+            Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HAPTIC_ON_QS, 1) != 0) {
+            mVibrator.vibrate(VibrationEffect.get(VibrationEffect.EFFECT_CLICK));
+        }
     }
 
     public void secondaryClick(@Nullable View view) {

@@ -78,6 +78,7 @@ import android.media.AudioSystem;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
+import android.os.AsyncTask;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
@@ -85,6 +86,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.text.InputFilter;
@@ -127,7 +129,6 @@ import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.internal.jank.InteractionJankMonitor;
-import com.android.internal.util.derp.VibratorHelper;
 import com.android.internal.view.RotationPolicy;
 import com.android.settingslib.media.flags.Flags;
 import com.android.settingslib.Utils;
@@ -180,8 +181,6 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
 
     private static final int DRAWER_ANIMATION_DURATION_SHORT = 175;
     private static final int DRAWER_ANIMATION_DURATION = 250;
-
-    private static final int HAPTIC_MIN_GAP = 15;
 
     /** Shows volume dialog show animation. */
     private static final String TYPE_SHOW = "show";
@@ -363,8 +362,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     private final Lazy<SecureSettings> mSecureSettings;
     private int mDialogTimeoutMillis = DIALOG_TIMEOUT_MILLIS;
 
-    private final VibratorHelper mVibratorHelper;
-    private long mLastHapticTimestamp;
+    private Vibrator mVibrator;
 
     public VolumeDialogImpl(
             Context context,
@@ -458,9 +456,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 false, volumeTimeoutObserver);
         volumeTimeoutObserver.onChange(true);
 
-        mVibratorHelper = new VibratorHelper(mContext, true,
-                Settings.System.HAPTIC_FEEDBACK_ENABLED,
-                Settings.System.HAPTIC_ON_VOLUME_SLIDER);
+        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
 
         initDimens();
 
@@ -521,7 +517,6 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         if (mDevicePostureController != null) {
             mDevicePostureController.removeCallback(mDevicePostureControllerCallback);
         }
-        mVibratorHelper.stopObserving();
     }
 
     @Override
@@ -3092,13 +3087,18 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 }
             }
 
-            long now = SystemClock.uptimeMillis();
-            if (progress == 0 || progress == 3000) {
-                mVibratorHelper.vibrateForDuration(100);
-            } else if (now - mLastHapticTimestamp > HAPTIC_MIN_GAP) {
-                mLastHapticTimestamp = now;
-                final int duration = (int) (1 + 0.026 * progress);
-                mVibratorHelper.vibrateForDuration(duration);
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) != 0 &&
+                Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.HAPTIC_ON_VOLUME_SLIDER, 1) != 0) {
+                if (progress == 0 || progress == 3000) {
+                    AsyncTask.execute(() ->
+                            mVibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)));
+                } else {
+                    int duration = (int) (1 + 0.026 * progress);
+                    AsyncTask.execute(() ->
+                            mVibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)));
+                }
             }
         }
 

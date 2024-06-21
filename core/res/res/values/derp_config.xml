@@ -14,9 +14,6 @@
     <string-array name="config_deviceKeyHandlerClasses" translatable="false">
         <item>com.android.touch.gestures.KeyHandler</item>
     </string-array>
-
-    <!-- Whether device has a linear motor vibrator -->
-    <bool name="config_hasLinearMotorVibrator">true</bool>
     
     <!-- Default values for LiveDisplay -->
     <bool name="config_enableLiveDisplay">true</bool>

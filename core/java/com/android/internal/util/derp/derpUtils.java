@@ -307,9 +307,4 @@ public class derpUtils {
             }
         }
     }
-
-    public static boolean hasLinearMotorVibrator(Context context) {
-        return context.getResources().getBoolean(
-                com.android.internal.R.bool.config_hasLinearMotorVibrator);
-    }
 }

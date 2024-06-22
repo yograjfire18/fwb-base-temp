@@ -18,7 +18,6 @@ package com.android.systemui.statusbar.pipeline.mobile.data.repository
 
 import android.telephony.TelephonyManager.UNKNOWN_CARRIER_ID
 import com.android.systemui.log.table.TableLogBuffer
-import com.android.systemui.statusbar.pipeline.ims.data.model.ImsStateModel
 import com.android.systemui.statusbar.pipeline.mobile.data.model.DataConnectionState
 import com.android.systemui.statusbar.pipeline.mobile.data.model.NetworkNameModel
 import com.android.systemui.statusbar.pipeline.mobile.data.model.ResolvedNetworkType
@@ -32,10 +31,12 @@ class FakeMobileConnectionRepository(
     override val tableLogBuffer: TableLogBuffer,
 ) : MobileConnectionRepository {
     override val carrierId = MutableStateFlow(UNKNOWN_CARRIER_ID)
+    override val inflateSignalStrength: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val isEmergencyOnly = MutableStateFlow(false)
     override val isRoaming = MutableStateFlow(false)
     override val operatorAlphaShort: MutableStateFlow<String?> = MutableStateFlow(null)
     override val isInService = MutableStateFlow(false)
+    override val isNonTerrestrial = MutableStateFlow(false)
     override val isGsm = MutableStateFlow(false)
     override val cdmaLevel = MutableStateFlow(0)
     override val primaryLevel = MutableStateFlow(0)
@@ -66,8 +67,6 @@ class FakeMobileConnectionRepository(
     private var isInEcmMode: Boolean = false
 
     override suspend fun isInEcmMode(): Boolean = isInEcmMode
-
-    override val imsState = MutableStateFlow(ImsStateModel())
 
     fun setDataEnabled(enabled: Boolean) {
         _dataEnabled.value = enabled

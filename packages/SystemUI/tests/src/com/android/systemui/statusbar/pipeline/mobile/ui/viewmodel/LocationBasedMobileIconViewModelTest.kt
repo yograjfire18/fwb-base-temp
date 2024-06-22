@@ -30,7 +30,6 @@ import com.android.systemui.statusbar.pipeline.mobile.data.model.DataConnectionS
 import com.android.systemui.statusbar.pipeline.mobile.data.model.ResolvedNetworkType
 import com.android.systemui.statusbar.pipeline.mobile.data.repository.FakeMobileConnectionRepository
 import com.android.systemui.statusbar.pipeline.mobile.data.repository.FakeMobileConnectionsRepository
-import com.android.systemui.statusbar.pipeline.mobile.data.repository.FakeUserSetupRepository
 import com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MobileIconInteractor
 import com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MobileIconInteractorImpl
 import com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MobileIconsInteractor
@@ -39,6 +38,7 @@ import com.android.systemui.statusbar.pipeline.mobile.domain.model.SignalIconMod
 import com.android.systemui.statusbar.pipeline.mobile.util.FakeMobileMappingsProxy
 import com.android.systemui.statusbar.pipeline.shared.ConnectivityConstants
 import com.android.systemui.statusbar.pipeline.shared.data.repository.FakeConnectivityRepository
+import com.android.systemui.statusbar.policy.data.repository.FakeUserSetupRepository
 import com.android.systemui.util.CarrierConfigTracker
 import com.android.systemui.util.mockito.mock
 import com.google.common.truth.Truth.assertThat
@@ -134,9 +134,6 @@ class LocationBasedMobileIconViewModelTest : SysuiTestCase() {
                 iconsInteractor.defaultMobileIconGroup,
                 iconsInteractor.isDefaultConnectionFailed,
                 iconsInteractor.isForceHidden,
-                iconsInteractor.isRoamingForceHidden,
-                iconsInteractor.isMobileHdForceHidden,
-                iconsInteractor.isVoWifiForceHidden,
                 repository,
                 context,
                 MobileIconCarrierIdOverridesFake()
@@ -193,12 +190,11 @@ class LocationBasedMobileIconViewModelTest : SysuiTestCase() {
 
         /** Convenience constructor for these tests */
         fun defaultSignal(level: Int = 1): SignalIconModel {
-            return SignalIconModel(
+            return SignalIconModel.Cellular(
                 level,
                 NUM_LEVELS,
                 showExclamationMark = false,
                 carrierNetworkChange = false,
-                showRoaming = false,
             )
         }
     }

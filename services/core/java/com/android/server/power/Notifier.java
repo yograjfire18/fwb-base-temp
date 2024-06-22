@@ -121,8 +121,6 @@ public class Notifier {
                     -1);
     private static final VibrationAttributes HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES =
             VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
-    private static final VibrationEffect CHARGING_VIBRATION_DOUBLE_CLICK_EFFECT =
-            VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK);
 
     private final Object mLock = new Object();
 
@@ -409,6 +407,11 @@ public class Notifier {
             }
         }
         mWakeLockLog.onWakeLockReleased(tag, ownerUid);
+    }
+
+    /** Shows the keyguard without requesting the device to immediately lock. */
+    public void showDismissibleKeyguard() {
+        mPolicy.showDismissibleKeyguard();
     }
 
     private int getBatteryStatsWakeLockMonitorType(int flags) {
@@ -986,8 +989,9 @@ public class Notifier {
             final boolean vibrate = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.CHARGING_VIBRATION_ENABLED, 1, userId) != 0;
             if (vibrate) {
-                mVibrator.vibrate(mVibrator.hasAmplitudeControl() ? CHARGING_VIBRATION_EFFECT :
-                    CHARGING_VIBRATION_DOUBLE_CLICK_EFFECT, HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
+                mVibrator.vibrate(Process.SYSTEM_UID, mContext.getOpPackageName(),
+                        CHARGING_VIBRATION_EFFECT, /* reason= */ "Charging started",
+                        HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
             }
 
         if (isChargingFeedbackEnabled(userId)) {

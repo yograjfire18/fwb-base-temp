@@ -92,6 +92,7 @@ import android.telephony.CarrierConfigManager;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.telephony.ims.ImsManager;
+import android.telephony.satellite.SatelliteManager;
 import android.view.Choreographer;
 import android.view.CrossWindowBlurListeners;
 import android.view.IWindowManager;
@@ -557,7 +558,7 @@ public class FrameworkServicesModule {
     @Provides
     @Singleton
     static SubscriptionManager provideSubscriptionManager(Context context) {
-        return context.getSystemService(SubscriptionManager.class);
+        return context.getSystemService(SubscriptionManager.class).createForAllUserProfiles();
     }
 
     @Provides
@@ -713,6 +714,12 @@ public class FrameworkServicesModule {
         return IUriGrantsManager.Stub.asInterface(
                 ServiceManager.getService(Context.URI_GRANTS_SERVICE)
         );
+    }
+
+    @Provides
+    @Singleton
+    static Optional<SatelliteManager> provideSatelliteManager(Context context) {
+        return Optional.ofNullable(context.getSystemService(SatelliteManager.class));
     }
 
     @Provides

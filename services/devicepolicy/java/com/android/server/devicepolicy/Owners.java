@@ -616,10 +616,23 @@ class Owners {
         }
     }
 
+    void markSecurityLoggingMigrated() {
+        synchronized (mData) {
+            mData.mSecurityLoggingMigrated = true;
+            mData.writeDeviceOwner();
+        }
+    }
+
     void markPostUpgradeMigration() {
         synchronized (mData) {
             mData.mPoliciesMigratedPostUpdate = true;
             mData.writeDeviceOwner();
+        }
+    }
+
+    boolean isSecurityLoggingMigrated() {
+        synchronized (mData) {
+            return mData.mSecurityLoggingMigrated;
         }
     }
 

@@ -1023,6 +1023,10 @@ public class CameraServiceProxy extends SystemService
         }
     }
 
+    private boolean isAutomotive() {
+        return mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE);
+    }
+
     private Set<Integer> getEnabledUserHandles(int currentUserHandle) {
         int[] userProfiles = mUserManager.getEnabledProfileIds(currentUserHandle);
         Set<Integer> handles = new ArraySet<>(userProfiles.length);
@@ -1034,8 +1038,8 @@ public class CameraServiceProxy extends SystemService
 
         if (Flags.cameraHsumPermission()) {
             // If the device is running in headless system user mode then allow
-            // User 0 to access camera.
-            if (UserManager.isHeadlessSystemUserMode()) {
+            // User 0 to access camera only for automotive form factor.
+            if (UserManager.isHeadlessSystemUserMode() && isAutomotive()) {
                 handles.add(UserHandle.USER_SYSTEM);
             }
         }
@@ -1296,7 +1300,7 @@ public class CameraServiceProxy extends SystemService
             return;
         }
         if (DEBUG) Slog.v(TAG, "Setting NFC reader mode. enablePolling: " + enablePolling);
-        nfcAdapter.setReaderMode(enablePolling);
+        nfcAdapter.setReaderModePollingEnabled(enablePolling);
     }
 
     private static int[] toArray(Collection<Integer> c) {

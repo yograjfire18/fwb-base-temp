@@ -14,6 +14,7 @@
 
 package com.android.systemui.statusbar.phone;
 
+import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_BINDABLE;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_BLUETOOTH;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_ICON;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_MOBILE_NEW;
@@ -46,11 +47,13 @@ import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.StatusIconDisplayable;
 import com.android.systemui.statusbar.connectivity.ui.MobileContextProvider;
 import com.android.systemui.statusbar.phone.PhoneStatusBarPolicy.BluetoothIconState;
+import com.android.systemui.statusbar.phone.StatusBarIconHolder.BindableIconHolder;
 import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.CallIndicatorIconState;
 import com.android.systemui.statusbar.pipeline.mobile.ui.MobileUiAdapter;
 import com.android.systemui.statusbar.pipeline.mobile.ui.binder.MobileIconsBinder;
 import com.android.systemui.statusbar.pipeline.mobile.ui.view.ModernStatusBarMobileView;
 import com.android.systemui.statusbar.pipeline.mobile.ui.viewmodel.MobileIconsViewModel;
+import com.android.systemui.statusbar.pipeline.shared.ui.view.ModernStatusBarView;
 import com.android.systemui.statusbar.pipeline.wifi.ui.WifiUiAdapter;
 import com.android.systemui.statusbar.pipeline.wifi.ui.view.ModernStatusBarWifiView;
 import com.android.systemui.statusbar.pipeline.wifi.ui.viewmodel.LocationBasedWifiViewModel;
@@ -459,6 +462,10 @@ public interface StatusBarIconController {
 
                 case TYPE_NETWORK_TRAFFIC:
                     return addNetworkTraffic(index, slot);
+
+                case TYPE_BINDABLE:
+                    // Safe cast, since only BindableIconHolders can set this tag on themselves
+                    return addBindableIcon((BindableIconHolder) holder, index);
             }
 
             return null;
@@ -477,6 +484,18 @@ public interface StatusBarIconController {
 
         protected NetworkTrafficSB addNetworkTraffic(int index, String slot) {
             NetworkTrafficSB view = onCreateNetworkTraffic(slot);
+            mGroup.addView(view, index, onCreateLayoutParams());
+            return view;
+        }
+
+        /**
+         * ModernStatusBarViews can be created and bound, and thus do not need to update their
+         *  drawable by sending multiple calls to setIcon. Instead, by using a bindable
+         * icon view, we can simply create the icon when requested and allow the
+         * ViewBinder to control its visual state.
+         */
+        protected StatusIconDisplayable addBindableIcon(BindableIconHolder holder, int index) {
+            ModernStatusBarView view = holder.getInitializer().createAndBind(mContext);
             mGroup.addView(view, index, onCreateLayoutParams());
             return view;
         }
@@ -583,6 +602,7 @@ public interface StatusBarIconController {
                     return;
                 case TYPE_MOBILE_NEW:
                 case TYPE_WIFI_NEW:
+                case TYPE_BINDABLE:
                     // Nothing, the new icons update themselves
                     return;
                 case TYPE_BLUETOOTH:

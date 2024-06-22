@@ -20,6 +20,7 @@ import static android.app.admin.DevicePolicyManager.DEVICE_OWNER_TYPE_DEFAULT;
 import android.annotation.Nullable;
 import android.app.admin.SystemUpdateInfo;
 import android.app.admin.SystemUpdatePolicy;
+import android.app.admin.flags.Flags;
 import android.content.ComponentName;
 import android.os.UserHandle;
 import android.util.ArrayMap;
@@ -86,6 +87,7 @@ class OwnersData {
     private static final String ATTR_DEVICE_OWNER_TYPE_VALUE = "value";
 
     private static final String ATTR_MIGRATED_TO_POLICY_ENGINE = "migratedToPolicyEngine";
+    private static final String ATTR_SECURITY_LOG_MIGRATED = "securityLogMigrated";
 
     private static final String ATTR_MIGRATED_POST_UPGRADE = "migratedPostUpgrade";
 
@@ -115,6 +117,7 @@ class OwnersData {
     private final PolicyPathProvider mPathProvider;
 
     boolean mMigratedToPolicyEngine = false;
+    boolean mSecurityLoggingMigrated = false;
 
     boolean mPoliciesMigratedPostUpdate = false;
 
@@ -402,6 +405,9 @@ class OwnersData {
             out.startTag(null, TAG_POLICY_ENGINE_MIGRATION);
             out.attributeBoolean(null, ATTR_MIGRATED_TO_POLICY_ENGINE, mMigratedToPolicyEngine);
             out.attributeBoolean(null, ATTR_MIGRATED_POST_UPGRADE, mPoliciesMigratedPostUpdate);
+            if (Flags.securityLogV2Enabled()) {
+                out.attributeBoolean(null, ATTR_SECURITY_LOG_MIGRATED, mSecurityLoggingMigrated);
+            }
             out.endTag(null, TAG_POLICY_ENGINE_MIGRATION);
 
         }
@@ -464,6 +470,9 @@ class OwnersData {
                             null, ATTR_MIGRATED_TO_POLICY_ENGINE, false);
                     mPoliciesMigratedPostUpdate = parser.getAttributeBoolean(
                             null, ATTR_MIGRATED_POST_UPGRADE, false);
+                    mSecurityLoggingMigrated = Flags.securityLogV2Enabled()
+                            && parser.getAttributeBoolean(null, ATTR_SECURITY_LOG_MIGRATED, false);
+
                     break;
                 default:
                     Slog.e(TAG, "Unexpected tag: " + tag);

@@ -173,7 +173,6 @@ class MobileConnectionsRepositoryTest : SysuiTestCase() {
                 dispatcher,
                 testScope.backgroundScope,
                 mock(),
-                mock(),
             )
 
         carrierConfigRepository =
@@ -211,7 +210,6 @@ class MobileConnectionsRepositoryTest : SysuiTestCase() {
                 logFactory = logBufferFactory,
                 mobileRepoFactory = connectionFactory,
                 carrierMergedRepoFactory = carrierMergedFactory,
-                imsRepoFactory = mock(),
             )
 
         underTest =

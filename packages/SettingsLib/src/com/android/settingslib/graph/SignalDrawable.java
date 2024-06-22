@@ -14,10 +14,10 @@
 
 package com.android.settingslib.graph;
 
+import static com.android.settingslib.flags.Flags.newStatusBarIcons;
+
 import android.animation.ArgbEvaluator;
 import android.annotation.IntRange;
-import android.annotation.NonNull;
-import android.annotation.Nullable;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
@@ -35,6 +35,9 @@ import android.os.Handler;
 import android.telephony.CellSignalStrength;
 import android.util.LayoutDirection;
 import android.util.PathParser;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
@@ -62,11 +65,14 @@ public class SignalDrawable extends DrawableWrapper {
     private static final int STATE_SHIFT = 16;
     private static final int STATE_MASK = 0xff << STATE_SHIFT;
     private static final int STATE_CUT = 2;
-    private static final int STATE_CUT_R = 5;
-    private static final int STATE_CUT_AND_R = 7;
-    private static final int STATE_CARRIER_CHANGE = 4;
+    private static final int STATE_CARRIER_CHANGE = 3;
+    private static final int STATE_R = 4;
+    private static final int STATE_CUT_AND_R = 5;
 
     private static final long DOT_DELAY = 1000;
+
+    // Check the config for which icon we want to use
+    private static final int ICON_RES = SignalDrawable.getIconRes();
 
     private final Paint mForegroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mTransparentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -90,7 +96,7 @@ public class SignalDrawable extends DrawableWrapper {
     private int mCurrentDot;
 
     public SignalDrawable(Context context) {
-        super(context.getDrawable(com.android.internal.R.drawable.ic_signal_cellular));
+        super(context.getDrawable(ICON_RES));
         final String attributionPathString = context.getString(
                 com.android.internal.R.string.config_signalAttributionPath);
         final String roamingPathString = context.getString(
@@ -160,9 +166,17 @@ public class SignalDrawable extends DrawableWrapper {
 
     private int unpackLevel(int packedState) {
         int numBins = (packedState & NUM_LEVEL_MASK) >> NUM_LEVEL_SHIFT;
+        int cutOutOffset = 0;
         int levelOffset = numBins == (CellSignalStrength.getNumSignalStrengthLevels() + 1) ? 10 : 0;
         int level = (packedState & LEVEL_MASK);
-        return level + levelOffset;
+
+        if (newStatusBarIcons()) {
+            if (isInState(STATE_CUT)) {
+                cutOutOffset = 20;
+            }
+        }
+
+        return level + levelOffset + cutOutOffset;
     }
 
     public void setDarkIntensity(float darkIntensity) {
@@ -260,8 +274,8 @@ public class SignalDrawable extends DrawableWrapper {
             mCutoutPath.rLineTo(0, cutY);
             canvas.drawPath(mCutoutPath, mTransparentPaint);
             canvas.drawPath(mScaledAttributionPath, mForegroundPaint);
-        } else if (isInState(STATE_CUT) || isInState(STATE_CUT_R)) {
-            boolean isRoaming = isInState(STATE_CUT_R);
+        } else if (isInState(STATE_CUT) || isInState(STATE_R)) {
+            boolean isRoaming = isInState(STATE_R);
             float cutWidth = isRoaming ? mRCutoutWidthFraction : mCutoutWidthFraction;
             float cutHeight = isRoaming ? mRCutoutHeightFraction : mCutoutHeightFraction;
             float cutX = (cutWidth * width / VIEWPORT);
@@ -336,7 +350,7 @@ public class SignalDrawable extends DrawableWrapper {
     }
 
     public static int getState(int level, int numLevels, boolean cutOut, boolean roaming) {
-        int state = cutOut ? (roaming ? STATE_CUT_AND_R : STATE_CUT) : (roaming ? STATE_CUT_R : 0);
+        int state = cutOut ? (roaming ? STATE_CUT_AND_R : STATE_CUT) : (roaming ? STATE_R : 0);
         return (state << STATE_SHIFT) | (numLevels << NUM_LEVEL_SHIFT) | level;
     }
 
@@ -352,5 +366,13 @@ public class SignalDrawable extends DrawableWrapper {
     /** Returns the state representing carrier change with the given number of levels. */
     public static int getCarrierChangeState(int numLevels) {
         return (STATE_CARRIER_CHANGE << STATE_SHIFT) | (numLevels << NUM_LEVEL_SHIFT);
+    }
+
+    private static int getIconRes() {
+        if (newStatusBarIcons()) {
+            return R.drawable.ic_mobile_level_list;
+        } else {
+            return com.android.internal.R.drawable.ic_signal_cellular;
+        }
     }
 }

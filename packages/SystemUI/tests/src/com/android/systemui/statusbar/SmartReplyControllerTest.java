@@ -106,8 +106,7 @@ public class SmartReplyControllerTest extends SysuiTestCase {
                 notification,
                 new UserHandle(ActivityManager.getCurrentUser()),
                 null,
-                0,
-                false /* isContentSecure */);
+                0);
         mEntry = new NotificationEntryBuilder()
                 .setSbn(mSbn)
                 .build();

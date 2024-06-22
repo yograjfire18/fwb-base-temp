@@ -291,6 +291,10 @@ public class DozeTriggers implements DozeMachine.Part {
                 pulseLightFaceDownDefault, UserHandle.USER_CURRENT) != 0;
     }
 
+    private void onSideFingerprintAcquisitionStarted() {
+        requestPulse(DozeLog.PULSE_REASON_FINGERPRINT_ACTIVATED, false, null);
+    }
+
     private static void runIfNotNull(Runnable runnable) {
         if (runnable != null) {
             runnable.run();
@@ -726,6 +730,11 @@ public class DozeTriggers implements DozeMachine.Part {
         @Override
         public void onNotificationAlerted(Runnable onPulseSuppressedListener) {
             onNotification(onPulseSuppressedListener);
+        }
+
+        @Override
+        public void onSideFingerprintAcquisitionStarted() {
+            DozeTriggers.this.onSideFingerprintAcquisitionStarted();
         }
     };
 }

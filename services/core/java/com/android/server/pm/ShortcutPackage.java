@@ -158,9 +158,6 @@ class ShortcutPackage extends ShortcutPackageItem {
     private static final String KEY_BITMAPS = "bitmaps";
     private static final String KEY_BITMAP_BYTES = "bitmapBytes";
 
-    @VisibleForTesting
-    public static final int REPORT_USAGE_BUFFER_SIZE = 3;
-
     private final Executor mExecutor;
 
     /**
@@ -197,7 +194,7 @@ class ShortcutPackage extends ShortcutPackageItem {
     private long mLastKnownForegroundElapsedTime;
 
     @GuardedBy("mLock")
-    private List<Long> mLastReportedTime = new ArrayList<>();
+    private long mLastReportedTime;
 
     @GuardedBy("mLock")
     private boolean mIsAppSearchSchemaUpToDate;
@@ -243,7 +240,7 @@ class ShortcutPackage extends ShortcutPackageItem {
 
     @Override
     protected boolean canRestoreAnyVersion() {
-        return false;
+        return true;
     }
 
     @Override
@@ -1686,19 +1683,15 @@ class ShortcutPackage extends ShortcutPackageItem {
         synchronized (mLock) {
             final long currentTS = SystemClock.elapsedRealtime();
             final ShortcutService s = mShortcutUser.mService;
-            if (mLastReportedTime.isEmpty()
-                    || mLastReportedTime.size() < REPORT_USAGE_BUFFER_SIZE) {
-                mLastReportedTime.add(currentTS);
-            } else if (currentTS - mLastReportedTime.get(0) > s.mSaveDelayMillis) {
-                mLastReportedTime.remove(0);
-                mLastReportedTime.add(currentTS);
+            if (currentTS - mLastReportedTime > s.mSaveDelayMillis) {
+                mLastReportedTime = currentTS;
             } else {
                 return;
             }
             final long token = s.injectClearCallingIdentity();
             try {
                 usageStatsManagerInternal.reportShortcutUsage(getPackageName(), shortcutId,
-                        getUser().getUserId());
+                        getPackageUserId());
             } finally {
                 s.injectRestoreCallingIdentity(token);
             }

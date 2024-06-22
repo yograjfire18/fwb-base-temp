@@ -3152,6 +3152,7 @@ public class AccountManagerService
                                     new AccountAuthenticatorResponse(this),
                                     authTokenType,
                                     true);
+                            mCanStartAccountManagerActivity = true;
                             Bundle bundle = new Bundle();
                             bundle.putParcelable(AccountManager.KEY_INTENT, intent);
                             onResult(bundle);
@@ -4938,6 +4939,7 @@ public class AccountManagerService
         IAccountAuthenticator mAuthenticator = null;
 
         private final boolean mStripAuthTokenFromResult;
+        protected boolean mCanStartAccountManagerActivity = false;
         protected final UserAccounts mAccounts;
 
         public Session(UserAccounts accounts, IAccountManagerResponse response, String accountType,
@@ -5073,9 +5075,13 @@ public class AccountManagerService
 
         private boolean isExportedSystemActivity(ActivityInfo activityInfo) {
             String className = activityInfo.name;
-            return "android".equals(activityInfo.packageName) &&
-                    (GrantCredentialsPermissionActivity.class.getName().equals(className)
-                    || CantAddAccountActivity.class.getName().equals(className));
+            if (!"android".equals(activityInfo.packageName)) {
+                return false;
+
+            }
+            return (mCanStartAccountManagerActivity
+                    && GrantCredentialsPermissionActivity.class.getName().equals(className))
+                    || CantAddAccountActivity.class.getName().equals(className);
         }
 
         private void close() {

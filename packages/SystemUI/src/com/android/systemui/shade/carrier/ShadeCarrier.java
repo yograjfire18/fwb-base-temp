@@ -151,15 +151,9 @@ public class ShadeCarrier extends LinearLayout {
                         com.android.settingslib.R.string.not_default_data_content_description));
     }
 
-    public void updateColors(int color, ColorStateList colorStateList) {
-        final boolean visible = !mIsSingleCarrier;
-        if (visible) {
-            mMobileRoaming.setImageTintList(colorStateList);
-            mMobileSignal.setImageTintList(colorStateList);
-        }
-        if (mModernMobileView != null) {
-            mModernMobileView.updateTextColor(color);
-        }
+    public void updateColors(ColorStateList colorStateList) {
+        mMobileRoaming.setImageTintList(colorStateList);
+        mMobileSignal.setImageTintList(colorStateList);
     }
 
     @VisibleForTesting

@@ -25,7 +25,6 @@ import com.android.systemui.flags.FakeFeatureFlags
 import com.android.systemui.settings.UserTracker
 import com.android.systemui.util.mockito.any
 import com.android.systemui.util.mockito.capture
-import com.android.systemui.util.mockito.mock
 import com.android.systemui.util.mockito.whenever
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors
@@ -190,8 +189,6 @@ class ControlsFavoritingActivityTest : SysuiTestCase() {
             executor,
             controller,
             userTracker,
-            mock(),
-            mock(),
         ) {
 
         var triedToFinish = false

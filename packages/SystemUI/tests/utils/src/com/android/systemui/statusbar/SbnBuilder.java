@@ -85,8 +85,7 @@ public class SbnBuilder {
                 notification,
                 mUser,
                 mOverrideGroupKey,
-                mPostTime,
-                false /* isContentSecure */);
+                mPostTime);
         if (mInstanceId != null) {
             result.setInstanceId(mInstanceId);
         }

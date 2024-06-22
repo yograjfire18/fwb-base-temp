@@ -118,7 +118,6 @@ import android.window.WindowContainerToken;
 import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.graphics.ColorUtils;
-import com.android.internal.protolog.ProtoLogImpl;
 import com.android.internal.protolog.common.ProtoLog;
 import com.android.internal.util.ToBooleanFunction;
 import com.android.server.wm.SurfaceAnimator.Animatable;
@@ -471,7 +470,9 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
             }
         }
         final InsetsSource source = new InsetsSource(id, provider.getType());
-        source.setFrame(provider.getArbitraryRectangle());
+        source.setFrame(provider.getArbitraryRectangle())
+                .updateSideHint(getBounds())
+                .setBoundingRects(provider.getBoundingRects());
         mLocalInsetsSources.put(id, source);
         mDisplayContent.getInsetsStateController().updateAboveInsetsState(true);
     }
@@ -1595,7 +1596,7 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_NOSENSOR) {
             // NOSENSOR means the display's "natural" orientation, so return that.
             if (mDisplayContent != null) {
-                return mDisplayContent.getNaturalOrientation();
+                return mDisplayContent.getNaturalConfigurationOrientation();
             }
         } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
             // LOCKED means the activity's orientation remains unchanged, so return existing value.
@@ -3428,7 +3429,7 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
                 // ActivityOption#makeCustomAnimation or WindowManager#overridePendingTransition.
                 a.restrictDuration(MAX_APP_TRANSITION_DURATION);
             }
-            if (ProtoLogImpl.isEnabled(WM_DEBUG_ANIM)) {
+            if (ProtoLog.isEnabled(WM_DEBUG_ANIM)) {
                 ProtoLog.i(WM_DEBUG_ANIM, "Loaded animation %s for %s, duration: %d, stack=%s",
                         a, this, ((a != null) ? a.getDuration() : 0), Debug.getCallers(20));
             }
@@ -3643,6 +3644,29 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
     @Override
     public int getSurfaceHeight() {
         return mSurfaceControl.getHeight();
+    }
+
+    static void enforceSurfaceVisible(@NonNull WindowContainer<?> wc) {
+        if (wc.mSurfaceControl == null) {
+            return;
+        }
+        wc.getSyncTransaction().show(wc.mSurfaceControl);
+        final ActivityRecord ar = wc.asActivityRecord();
+        if (ar != null) {
+            ar.mLastSurfaceShowing = true;
+        }
+        // Force showing the parents because they may be hidden by previous transition.
+        for (WindowContainer<?> p = wc.getParent(); p != null && p != wc.mDisplayContent;
+                p = p.getParent()) {
+            if (p.mSurfaceControl != null) {
+                p.getSyncTransaction().show(p.mSurfaceControl);
+                final Task task = p.asTask();
+                if (task != null) {
+                    task.mLastSurfaceShowing = true;
+                }
+            }
+        }
+        wc.scheduleAnimation();
     }
 
     @CallSuper
@@ -3958,7 +3982,13 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
     @Nullable
     BLASTSyncEngine.SyncGroup getSyncGroup() {
         if (mSyncGroup != null) return mSyncGroup;
-        if (mParent != null) return mParent.getSyncGroup();
+        WindowContainer<?> parent = mParent;
+        while (parent != null) {
+            if (parent.mSyncGroup != null) {
+                return parent.mSyncGroup;
+            }
+            parent = parent.mParent;
+        }
         return null;
     }
 
@@ -3992,7 +4022,7 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
      * @param cancel If true, this is being finished because it is leaving the sync group rather
      *               than due to the sync group completing.
      */
-    void finishSync(Transaction outMergedTransaction, BLASTSyncEngine.SyncGroup group,
+    void finishSync(Transaction outMergedTransaction, @Nullable BLASTSyncEngine.SyncGroup group,
             boolean cancel) {
         if (mSyncState == SYNC_STATE_NONE) return;
         final BLASTSyncEngine.SyncGroup syncGroup = getSyncGroup();
@@ -4020,7 +4050,8 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
         if (!isVisibleRequested()) {
             return true;
         }
-        if (mSyncState == SYNC_STATE_NONE) {
+        if (mSyncState == SYNC_STATE_NONE && getSyncGroup() != null) {
+            Slog.i(TAG, "prepareSync in isSyncFinished: " + this);
             prepareSync();
         }
         if (mSyncState == SYNC_STATE_WAITING_FOR_DRAW) {
@@ -4079,16 +4110,18 @@ class WindowContainer<E extends WindowContainer> extends ConfigurationContainer<
             }
             if (newParent == null) {
                 // This is getting removed.
+                final BLASTSyncEngine.SyncGroup syncGroup = getSyncGroup();
                 if (oldParent.mSyncState != SYNC_STATE_NONE) {
                     // In order to keep the transaction in sync, merge it into the parent.
-                    finishSync(oldParent.mSyncTransaction, getSyncGroup(), true /* cancel */);
-                } else if (mSyncGroup != null) {
-                    // This is watched directly by the sync-group, so merge this transaction into
-                    // into the sync-group so it isn't lost
-                    finishSync(mSyncGroup.getOrphanTransaction(), mSyncGroup, true /* cancel */);
+                    finishSync(oldParent.mSyncTransaction, syncGroup, true /* cancel */);
+                } else if (syncGroup != null) {
+                    // This is watched by the sync-group, so merge this transaction into the
+                    // sync-group for not losing the operations in the transaction.
+                    finishSync(syncGroup.getOrphanTransaction(), syncGroup, true /* cancel */);
                 } else {
-                    throw new IllegalStateException("This container is in sync mode without a sync"
-                            + " group: " + this);
+                    Slog.wtf(TAG, this + " is in sync mode without a sync group");
+                    // Make sure the removal transaction take effect.
+                    finishSync(getPendingTransaction(), null /* group */, true /* cancel */);
                 }
                 return;
             } else if (mSyncGroup == null) {

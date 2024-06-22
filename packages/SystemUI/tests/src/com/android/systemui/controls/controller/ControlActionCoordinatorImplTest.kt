@@ -24,7 +24,6 @@ import com.android.systemui.broadcast.BroadcastSender
 import com.android.systemui.controls.ControlsMetricsLogger
 import com.android.systemui.controls.settings.ControlsSettingsDialogManager
 import com.android.systemui.controls.settings.FakeControlsSettingsRepository
-import com.android.systemui.globalactions.GlobalActionsComponent
 import com.android.systemui.plugins.ActivityStarter
 import com.android.systemui.statusbar.VibratorHelper
 import com.android.systemui.statusbar.policy.KeyguardStateController
@@ -71,8 +70,6 @@ class ControlActionCoordinatorImplTest : SysuiTestCase() {
     private lateinit var metricsLogger: ControlsMetricsLogger
     @Mock
     private lateinit var controlsSettingsDialogManager: ControlsSettingsDialogManager
-    @Mock
-    private lateinit var globalActionsComponent: GlobalActionsComponent
 
     companion object {
         fun <T> any(): T = Mockito.any<T>()
@@ -103,7 +100,6 @@ class ControlActionCoordinatorImplTest : SysuiTestCase() {
                 metricsLogger,
                 vibratorHelper,
                 controlsSettingsRepository,
-                globalActionsComponent,
         ))
         coordinator.activityContext = mContext
 

@@ -163,6 +163,6 @@ class DeviceControlsControllerImplTest : SysuiTestCase() {
         controller.setCallback(callback)
 
         verify(callback).removeControlsAutoTracker()
-        verify(callback, never()).onControlsAvailable(anyInt())
+        verify(callback, never()).onControlsUpdate(anyInt())
     }
 }

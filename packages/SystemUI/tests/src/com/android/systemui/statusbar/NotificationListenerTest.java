@@ -41,6 +41,7 @@ import com.android.systemui.plugins.PluginManager;
 import com.android.systemui.statusbar.NotificationListener.NotificationHandler;
 import com.android.systemui.statusbar.data.repository.NotificationListenerSettingsRepository;
 import com.android.systemui.statusbar.domain.interactor.SilentNotificationStatusIconsVisibilityInteractor;
+import com.android.systemui.statusbar.notification.shared.NotificationIconContainerRefactor;
 import com.android.systemui.util.concurrency.FakeExecutor;
 import com.android.systemui.util.time.FakeSystemClock;
 
@@ -78,7 +79,7 @@ public class NotificationListenerTest extends SysuiTestCase {
                 mFakeExecutor,
                 mPluginManager);
         mSbn = new StatusBarNotification(TEST_PACKAGE_NAME, TEST_PACKAGE_NAME, 0, null, TEST_UID, 0,
-                new Notification(), UserHandle.CURRENT, null, 0, false /* isContentSecure */);
+                new Notification(), UserHandle.CURRENT, null, 0);
 
         mListener.addNotificationHandler(mNotificationHandler);
     }
@@ -151,6 +152,7 @@ public class NotificationListenerTest extends SysuiTestCase {
 
     @Test
     public void testOnConnectReadStatusBarSetting() {
+        mSetFlagsRule.disableFlags(NotificationIconContainerRefactor.FLAG_NAME);
         NotificationListener.NotificationSettingsListener settingsListener =
                 mock(NotificationListener.NotificationSettingsListener.class);
         mListener.addNotificationSettingsListener(settingsListener);
@@ -164,6 +166,7 @@ public class NotificationListenerTest extends SysuiTestCase {
 
     @Test
     public void testOnStatusBarIconsBehaviorChanged() {
+        mSetFlagsRule.disableFlags(NotificationIconContainerRefactor.FLAG_NAME);
         NotificationListener.NotificationSettingsListener settingsListener =
                 mock(NotificationListener.NotificationSettingsListener.class);
         mListener.addNotificationSettingsListener(settingsListener);

@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.pipeline.domain.autoaddable
 
+import android.platform.test.annotations.EnabledOnRavenwood
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.systemui.SysuiTestCase
@@ -43,6 +44,7 @@ import org.mockito.MockitoAnnotations
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
+@EnabledOnRavenwood
 @RunWith(AndroidJUnit4::class)
 class DeviceControlsAutoAddableTest : SysuiTestCase() {
 
@@ -70,7 +72,7 @@ class DeviceControlsAutoAddableTest : SysuiTestCase() {
         runCurrent()
 
         verify(deviceControlsController).setCallback(capture(callbackCaptor))
-        callbackCaptor.value.onControlsAvailable(position)
+        callbackCaptor.value.onControlsUpdate(position)
 
         assertThat(signal).isEqualTo(AutoAddSignal.Add(SPEC, position))
         verify(deviceControlsController).removeCallback()
@@ -82,7 +84,7 @@ class DeviceControlsAutoAddableTest : SysuiTestCase() {
         runCurrent()
 
         verify(deviceControlsController).setCallback(capture(callbackCaptor))
-        callbackCaptor.value.onControlsAvailable(0)
+        callbackCaptor.value.onControlsUpdate(null)
 
         assertThat(signal).isNull()
         verify(deviceControlsController).removeCallback()

@@ -25,6 +25,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.platform.test.annotations.DisableFlags;
 import android.testing.AndroidTestingRunner;
 import android.testing.TestableLooper.RunWithLooper;
 import android.view.Display;
@@ -40,6 +41,7 @@ import com.android.systemui.SysuiTestCase;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.notification.collection.NotifLiveData;
 import com.android.systemui.statusbar.notification.collection.NotifLiveDataStore;
+import com.android.systemui.statusbar.notification.shared.NotificationsLiveDataStoreRefactor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +56,7 @@ import java.util.Objects;
 @SmallTest
 @RunWith(AndroidTestingRunner.class)
 @RunWithLooper
+@DisableFlags(NotificationsLiveDataStoreRefactor.FLAG_NAME)
 public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
     private static final int LIGHTS_ON = 0;
     private static final int LIGHTS_OUT = APPEARANCE_LOW_PROFILE_BARS;
@@ -110,8 +113,7 @@ public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
                 BEHAVIOR_DEFAULT,
                 WindowInsets.Type.defaultVisible(),
                 null /* packageName */,
-                null /* letterboxDetails */,
-                false /* needsMenu */);
+                null /* letterboxDetails */);
         assertTrue(mLightsOutNotifController.areLightsOut());
     }
 
@@ -125,8 +127,7 @@ public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
                 BEHAVIOR_DEFAULT,
                 WindowInsets.Type.defaultVisible(),
                 null /* packageName */,
-                null /* letterboxDetails */,
-                false /* needsMenu */);
+                null /* letterboxDetails */);
         assertFalse(mLightsOutNotifController.areLightsOut());
     }
 
@@ -158,8 +159,7 @@ public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
                 BEHAVIOR_DEFAULT,
                 WindowInsets.Type.defaultVisible(),
                 null /* packageName */,
-                null /* letterboxDetails */,
-                false /* needsMenu */);
+                null /* letterboxDetails */);
 
         // THEN we should show dot
         assertTrue(mLightsOutNotifController.shouldShowDot());
@@ -180,8 +180,7 @@ public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
                 BEHAVIOR_DEFAULT,
                 WindowInsets.Type.defaultVisible(),
                 null /* packageName */,
-                null /* letterboxDetails */,
-                false /* needsMenu */);
+                null /* letterboxDetails */);
 
         // THEN we shouldn't show the dot
         assertFalse(mLightsOutNotifController.shouldShowDot());
@@ -202,8 +201,7 @@ public class LegacyLightsOutNotifControllerTest extends SysuiTestCase {
                 BEHAVIOR_DEFAULT,
                 WindowInsets.Type.defaultVisible(),
                 null /* packageName */,
-                null /* letterboxDetails */,
-                false /* needsMenu */);
+                null /* letterboxDetails */);
 
         // THEN we shouldn't show the dot
         assertFalse(mLightsOutNotifController.shouldShowDot());

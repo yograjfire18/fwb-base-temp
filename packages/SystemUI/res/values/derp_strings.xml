@@ -139,26 +139,6 @@
     <!-- Content description indicating that tapping the element will allow deleting the screenshot [CHAR LIMIT=NONE] -->
     <string name="screenshot_delete_description">Delete screenshot</string>
 
-    <!-- Name of the vpn status bar icon. -->
-   <string name="status_bar_vpn">VPN</string>
-
-    <!-- Data usage info in QS footer -->
-    <string name="usage_data">used today</string>
-    <string name="usage_data_default_suffix">Data</string>
-    <string name="usage_wifi_default_suffix">Wi-Fi</string>
-
-    <!-- Text to use when the number in a notification info is too large -->
-    <string name="status_bar_notification_info_overflow" translatable="false">\u221E</string>
-
-    <!-- Name of the roaming status bar icon. -->
-    <string name="status_bar_roaming">Roaming indicator</string>
-
-    <!-- Name of the HD calling status bar icon. -->
-    <string name="status_bar_hd_calling">HD calling (VoLTE/VoNR)</string>
-
-    <!-- Name of the VoWiFi status bar icon. -->
-    <string name="status_bar_vowifi">Wi-Fi calling (VoWiFi)</string>
-
     <!-- Navbar -->
     <string name="systemui_tuner_navbar_title">Layout</string>
     <string name="navigation_bar_format_title">Navbar format</string>
@@ -192,12 +172,6 @@
     <string name="navbar_force_menu_key_title">Force menu key</string>
     <string name="navbar_force_menu_key_summary">Always show the menu key regardless of the context</string>
 
-    <!-- QuickSettings: InternetDialog: Summary for how many devices are connected to the hotspot [CHAR LIMIT=NONE] -->
-     <string name="quick_settings_internet_hotspot_summary_num_devices">{count, plural,
-        =1 {# device connected}
-        other {# devices connected}
-    }</string>
-
     <!-- Screen record dialog -->
     <!-- Label for the switch to enable/disable keeping screen awake in screen recording -->
     <string name="screenrecord_keep_screen_awake_label">Keep the screen awake</string>
@@ -217,6 +191,32 @@
     <string name="screenrecord_skip_time_summary">Remove the 3 second wait</string>
     <string name="screenrecord_hevc_switch_label">HEVC encoding</string>
     <string name="screenrecord_hevc_switch_summary">Use the more efficient HEVC encoder</string>
+
+    <!-- Name of the vpn status bar icon. -->
+    <string name="status_bar_vpn">VPN</string>
+
+    <!-- Data usage info in QS footer -->
+    <string name="usage_data">used today</string>
+    <string name="usage_data_default_suffix">Data</string>
+    <string name="usage_wifi_default_suffix">Wi-Fi</string>
+
+    <!-- Text to use when the number in a notification info is too large -->
+    <string name="status_bar_notification_info_overflow" translatable="false">\u221E</string>
+
+    <!-- Name of the roaming status bar icon. -->
+    <string name="status_bar_roaming">Roaming indicator</string>
+
+    <!-- Name of the HD calling status bar icon. -->
+    <string name="status_bar_hd_calling">HD calling (VoLTE/VoNR)</string>
+
+    <!-- Name of the VoWiFi status bar icon. -->
+    <string name="status_bar_vowifi">Wi-Fi calling (VoWiFi)</string>
+
+    <!-- QuickSettings: InternetDialog: Summary for how many devices are connected to the hotspot [CHAR LIMIT=NONE] -->
+    <plurals name="quick_settings_internet_hotspot_summary_num_devices">
+        <item quantity="one">%d device connected</item>
+        <item quantity="other">%d devices connected</item>
+    </plurals>
 
     <!-- Kill button in notification guts -->
     <string name="force_stop_dlg_title">Force stop?</string>

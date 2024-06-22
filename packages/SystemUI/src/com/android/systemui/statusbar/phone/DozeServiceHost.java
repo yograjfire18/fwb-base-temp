@@ -46,7 +46,7 @@ import com.android.systemui.keyguard.WakefulnessLifecycle;
 import com.android.systemui.keyguard.domain.interactor.DozeInteractor;
 import com.android.systemui.derp.pulselight.PulseLightNotifManager;
 import com.android.systemui.shade.NotificationShadeWindowViewController;
-import com.android.systemui.shade.ShadeViewController;
+import com.android.systemui.shade.ShadeLockscreenInteractor;
 import com.android.systemui.statusbar.NotificationShadeWindowController;
 import com.android.systemui.statusbar.PulseExpansionHandler;
 import com.android.systemui.statusbar.StatusBarState;
@@ -60,11 +60,12 @@ import com.android.systemui.statusbar.policy.HeadsUpManager;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import com.android.systemui.util.Assert;
 
+import dagger.Lazy;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import dagger.Lazy;
 import kotlinx.coroutines.ExperimentalCoroutinesApi;
 
 /**
@@ -103,7 +104,7 @@ public final class DozeServiceHost implements DozeHost {
     private final AuthController mAuthController;
     private final NotificationIconAreaController mNotificationIconAreaController;
     private StatusBarKeyguardViewManager mStatusBarKeyguardViewManager;
-    private ShadeViewController mNotificationPanel;
+    private final ShadeLockscreenInteractor mShadeLockscreenInteractor;
     private View mAmbientIndicationContainer;
     private CentralSurfaces mCentralSurfaces;
     private boolean mAlwaysOnSuppressed;
@@ -130,6 +131,7 @@ public final class DozeServiceHost implements DozeHost {
             NotificationWakeUpCoordinator notificationWakeUpCoordinator,
             AuthController authController,
             NotificationIconAreaController notificationIconAreaController,
+            ShadeLockscreenInteractor shadeLockscreenInteractor,
             DozeInteractor dozeInteractor,
             PulseLightNotifManager pulseLightNotifManager,
             Context context) {
@@ -152,6 +154,7 @@ public final class DozeServiceHost implements DozeHost {
         mNotificationWakeUpCoordinator = notificationWakeUpCoordinator;
         mAuthController = authController;
         mNotificationIconAreaController = notificationIconAreaController;
+        mShadeLockscreenInteractor = shadeLockscreenInteractor;
         mHeadsUpManager.addListener(mOnHeadsUpChangedListener);
         mDozeInteractor = dozeInteractor;
         pulseLightNotifManager.addListener(mPulseLightNotifListener);
@@ -167,11 +170,9 @@ public final class DozeServiceHost implements DozeHost {
             CentralSurfaces centralSurfaces,
             StatusBarKeyguardViewManager statusBarKeyguardViewManager,
             NotificationShadeWindowViewController notificationShadeWindowViewController,
-            ShadeViewController notificationPanel,
             View ambientIndicationContainer) {
         mCentralSurfaces = centralSurfaces;
         mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
-        mNotificationPanel = notificationPanel;
         mNotificationShadeWindowViewController = notificationShadeWindowViewController;
         mAmbientIndicationContainer = ambientIndicationContainer;
     }
@@ -186,6 +187,16 @@ public final class DozeServiceHost implements DozeHost {
         Assert.isMainThread();
         for (Callback callback : mCallbacks) {
             callback.onPowerSaveChanged(active);
+        }
+    }
+
+    /**
+     * Notify the registered callback about SPFS fingerprint acquisition started event.
+     */
+    public void fireSideFpsAcquisitionStarted() {
+        Assert.isMainThread();
+        for (int i = 0; i < mCallbacks.size(); i++) {
+            mCallbacks.get(i).onSideFingerprintAcquisitionStarted();
         }
     }
 
@@ -298,7 +309,7 @@ public final class DozeServiceHost implements DozeHost {
 
             private void setPulsing(boolean pulsing) {
                 mStatusBarKeyguardViewManager.setPulsing(pulsing);
-                mNotificationPanel.setPulsing(pulsing);
+                mShadeLockscreenInteractor.setPulsing(pulsing);
                 mStatusBarStateController.setPulsing(pulsing);
                 mIgnoreTouchWhilePulsing = false;
                 if (mKeyguardUpdateMonitor != null && passiveAuthInterrupt) {
@@ -339,7 +350,7 @@ public final class DozeServiceHost implements DozeHost {
     @Override
     public void dozeTimeTick() {
         mDozeInteractor.dozeTimeTick();
-        mNotificationPanel.dozeTimeTick();
+        mShadeLockscreenInteractor.dozeTimeTick();
         mAuthController.dozeTimeTick();
         if (mAmbientIndicationContainer instanceof DozeReceiver) {
             ((DozeReceiver) mAmbientIndicationContainer).dozeTimeTick();

@@ -39,7 +39,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.keyguard.AuthKeyguardMessageArea;
 import com.android.systemui.Dumpable;
-import com.android.systemui.animation.ActivityLaunchAnimator;
+import com.android.systemui.animation.ActivityTransitionAnimator;
+import com.android.systemui.animation.RemoteAnimationRunnerCompat;
 import com.android.systemui.display.data.repository.DisplayMetricsRepository;
 import com.android.systemui.navigationbar.NavigationBarView;
 import com.android.systemui.plugins.ActivityStarter.OnDismissAction;
@@ -47,7 +48,6 @@ import com.android.systemui.qs.QSPanelController;
 import com.android.systemui.shade.NotificationShadeWindowView;
 import com.android.systemui.shade.NotificationShadeWindowViewController;
 import com.android.systemui.shade.ShadeViewController;
-import com.android.systemui.shared.system.RemoteAnimationRunnerCompat;
 import com.android.systemui.statusbar.notification.row.ExpandableNotificationRow;
 import com.android.systemui.statusbar.policy.GameSpaceManager;
 import com.android.systemui.util.Compile;
@@ -285,6 +285,13 @@ public interface CentralSurfaces extends Dumpable, LifecycleOwner {
 
     void awakenDreams();
 
+    /**
+     * Handle a touch event while dreaming when the touch was initiated within a prescribed
+     * swipeable area. This method is provided for cases where swiping in certain areas of a dream
+     * should be handled by CentralSurfaces instead (e.g. swiping communal hub open).
+     */
+    void handleDreamTouch(MotionEvent event);
+
     boolean isBouncerShowing();
 
     boolean isBouncerShowingScrimmed();
@@ -334,7 +341,7 @@ public interface CentralSurfaces extends Dumpable, LifecycleOwner {
     /**
      * Gets an animation controller from a notification row.
      */
-    ActivityLaunchAnimator.Controller getAnimatorControllerFromNotification(
+    ActivityTransitionAnimator.Controller getAnimatorControllerFromNotification(
             ExpandableNotificationRow associatedView);
 
     GameSpaceManager getGameSpaceManager();

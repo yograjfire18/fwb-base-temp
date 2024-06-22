@@ -519,7 +519,6 @@ class StatusBarModeRepositoryImplTest : SysuiTestCase() {
             requestedVisibleTypes,
             packageName,
             letterboxDetails,
-            false /* needsMenu */
         )
     }
 

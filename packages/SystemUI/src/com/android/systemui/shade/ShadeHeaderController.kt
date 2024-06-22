@@ -21,12 +21,12 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.IdRes
 import android.app.PendingIntent
 import android.app.StatusBarManager
-import android.content.Context
 import android.content.Intent
+import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Insets
 import android.graphics.Color
+import android.graphics.Insets
 import android.net.Uri
 import android.os.Bundle
 import android.os.Trace
@@ -43,6 +43,7 @@ import androidx.core.view.doOnLayout
 import com.android.app.animation.Interpolators
 import com.android.settingslib.Utils
 import com.android.systemui.Dumpable
+import com.android.systemui.Flags.centralizedStatusBarHeightFix
 import com.android.systemui.animation.ShadeInterpolation
 import com.android.systemui.battery.BatteryMeterView
 import com.android.systemui.battery.BatteryMeterViewController
@@ -362,10 +363,10 @@ constructor(
         demoModeController.addCallback(demoModeReceiver)
         statusBarIconController.addIconGroup(iconManager)
         nextAlarmController.addCallback(nextAlarmCallback)
-        updateResources()
         systemIconsHoverContainer.setOnHoverListener(
             statusOverlayHoverListenerFactory.createListener(systemIconsHoverContainer)
         )
+        updateResources()
     }
 
     override fun onViewDetached() {
@@ -472,6 +473,9 @@ constructor(
             changes += combinedShadeHeadersConstraintManager.emptyCutoutConstraints()
         }
 
+        if (centralizedStatusBarHeightFix()) {
+            view.setPadding(view.paddingLeft, sbInsets.top, view.paddingRight, view.paddingBottom)
+        }
         view.updateAllConstraints(changes)
         updateBatteryMode()
     }
@@ -581,17 +585,16 @@ constructor(
         qsBatteryModeController.updateResources()
 
         val fillColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
-        val fillColorInverse = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimaryInverse)
-        iconManager.setTint(fillColor, fillColorInverse)
+        val inverseColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimaryInverse)
+        iconManager.setTint(fillColor, inverseColor)
         val textColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
-        val textColorInverse = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimaryInverse)
         val colorStateList = Utils.getColorAttr(context, android.R.attr.textColorPrimary)
         if (textColor != textColorPrimary) {
             val textColorSecondary = Utils.getColorAttrDefaultColor(context,
                     android.R.attr.textColorSecondary)
             textColorPrimary = textColor
             if (iconManager != null) {
-                iconManager.setTint(textColor, textColorInverse)
+                iconManager.setTint(textColor, inverseColor)
             }
             clock.setTextColor(textColorPrimary)
             date.setTextColor(textColorPrimary)

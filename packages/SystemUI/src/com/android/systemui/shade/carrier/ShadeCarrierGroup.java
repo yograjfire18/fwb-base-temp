@@ -65,7 +65,7 @@ public class ShadeCarrierGroup extends LinearLayout {
         ShadeCarrier[] shadeCarriers = { getCarrier1View(), getCarrier2View(), getCarrier3View() };
         for (ShadeCarrier shadeCarrier : shadeCarriers) {
             for (int i = 0; i < shadeCarrier.getChildCount(); i++) {
-                shadeCarrier.updateColors(color, colorStateList);
+                shadeCarrier.updateColors(colorStateList);
                 if (shadeCarrier.getChildAt(i) instanceof TextView) {
                     ((TextView) shadeCarrier.getChildAt(i)).setTextColor(color);
                 }

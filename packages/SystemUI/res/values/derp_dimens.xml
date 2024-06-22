@@ -10,6 +10,9 @@
     <!-- Width of the battery icon in the status bar when set to circle style. -->
     <dimen name="status_bar_battery_icon_circle_width">14.5dp</dimen>
 
+    <!-- Screen Record -->
+    <dimen name="screenrecord_dot_size">48dp</dimen>
+
     <!-- QQS Brightness slider -->
     <dimen name="qqs_top_brightness_margin_top">4dp</dimen>
     <dimen name="qqs_top_brightness_margin_bottom">12dp</dimen>
@@ -30,9 +33,6 @@
 
     <!-- HD calling icon -->
     <dimen name="signal_icon_viewport_size">24dp</dimen>
-
-    <!-- Screen Record -->
-    <dimen name="screenrecord_dot_size">48dp</dimen>
 
     <!-- Lyric -->
     <dimen name="lyric_icon_margin_end">4dp</dimen>

@@ -38,6 +38,7 @@ import com.android.systemui.plugins.clocks.ClockEvents
 import com.android.systemui.plugins.clocks.ClockFaceConfig
 import com.android.systemui.plugins.clocks.ClockFaceController
 import com.android.systemui.plugins.clocks.ClockFaceEvents
+import com.android.systemui.plugins.clocks.ClockMessageBuffers
 import com.android.systemui.plugins.clocks.ClockSettings
 import com.android.systemui.plugins.clocks.DefaultClockFaceLayout
 import com.android.systemui.plugins.clocks.WeatherData
@@ -46,8 +47,6 @@ import java.io.PrintWriter
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.collections.mapOf
-
-private val TAG = DefaultClockController::class.simpleName
 
 /**
  * Controls the default clock visuals.
@@ -62,6 +61,7 @@ class DefaultClockController(
     private val settings: ClockSettings?,
     private val hasStepClockAnimation: Boolean = false,
     private val migratedClocks: Boolean = false,
+    messageBuffers: ClockMessageBuffers? = null,
 ) : ClockController {
     override val smallClock: DefaultClockFaceController
     override val largeClock: LargeClockFaceController
@@ -89,13 +89,15 @@ class DefaultClockController(
             DefaultClockFaceController(
                 layoutInflater.inflate(R.layout.clock_default_small, parent, false)
                     as AnimatableClockView,
-                settings?.seedColor
+                settings?.seedColor,
+                messageBuffers?.smallClockMessageBuffer
             )
         largeClock =
             LargeClockFaceController(
                 layoutInflater.inflate(R.layout.clock_default_large, parent, false)
                     as AnimatableClockView,
-                settings?.seedColor
+                settings?.seedColor,
+                messageBuffers?.largeClockMessageBuffer
             )
         clocks = listOf(smallClock.view, largeClock.view)
 
@@ -116,6 +118,7 @@ class DefaultClockController(
     open inner class DefaultClockFaceController(
         override val view: AnimatableClockView,
         var seedColor: Int?,
+        messageBuffer: MessageBuffer?,
     ) : ClockFaceController {
 
         // MAGENTA is a placeholder, and will be assigned correctly in initialize
@@ -124,12 +127,10 @@ class DefaultClockController(
         protected var targetRegion: Rect? = null
 
         override val config = ClockFaceConfig()
-        override val layout = DefaultClockFaceLayout(view)
-
-        override var messageBuffer: MessageBuffer?
-            get() = view.messageBuffer
-            set(value) {
-                view.messageBuffer = value
+        override val layout =
+            DefaultClockFaceLayout(view).apply {
+                views[0].id =
+                    resources.getIdentifier("lockscreen_clock_view", "id", ctx.packageName)
             }
 
         override var animations: DefaultClockAnimations = DefaultClockAnimations(view, 0f, 0f)
@@ -140,6 +141,7 @@ class DefaultClockController(
                 currentColor = seedColor!!
             }
             view.setColors(DOZE_COLOR, currentColor)
+            messageBuffer?.let { view.messageBuffer = it }
         }
 
         override val events =
@@ -202,12 +204,19 @@ class DefaultClockController(
     inner class LargeClockFaceController(
         view: AnimatableClockView,
         seedColor: Int?,
-    ) : DefaultClockFaceController(view, seedColor) {
-        override val layout = DefaultClockFaceLayout(view)
+        messageBuffer: MessageBuffer?,
+    ) : DefaultClockFaceController(view, seedColor, messageBuffer) {
+        override val layout =
+            DefaultClockFaceLayout(view).apply {
+                views[0].id =
+                    resources.getIdentifier("lockscreen_clock_view_large", "id", ctx.packageName)
+            }
         override val config =
             ClockFaceConfig(hasCustomPositionUpdatedAnimation = hasStepClockAnimation)
 
         init {
+            view.migratedClocks = migratedClocks
+            view.hasCustomPositionUpdatedAnimation = hasStepClockAnimation
             animations = LargeClockAnimations(view, 0f, 0f)
         }
 

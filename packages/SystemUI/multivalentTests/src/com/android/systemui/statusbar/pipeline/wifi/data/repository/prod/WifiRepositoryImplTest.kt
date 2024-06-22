@@ -38,7 +38,6 @@ import androidx.test.filters.SmallTest
 import com.android.systemui.SysuiTestCase
 import com.android.systemui.coroutines.collectLastValue
 import com.android.systemui.log.table.TableLogBuffer
-import com.android.systemui.statusbar.pipeline.ims.data.repository.CommonImsRepositoryImpl
 import com.android.systemui.statusbar.pipeline.shared.data.model.ConnectivitySlots
 import com.android.systemui.statusbar.pipeline.shared.data.model.DataActivityModel
 import com.android.systemui.statusbar.pipeline.shared.data.repository.ConnectivityRepository
@@ -84,7 +83,6 @@ class WifiRepositoryImplTest : SysuiTestCase() {
     @Mock private lateinit var wifiManager: WifiManager
     private lateinit var executor: Executor
     private lateinit var connectivityRepository: ConnectivityRepository
-    private val commonImsRepo = mock<CommonImsRepositoryImpl>()
 
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
@@ -1270,7 +1268,6 @@ class WifiRepositoryImplTest : SysuiTestCase() {
             dispatcher,
             testScope.backgroundScope,
             wifiManager,
-            commonImsRepo,
         )
     }
 

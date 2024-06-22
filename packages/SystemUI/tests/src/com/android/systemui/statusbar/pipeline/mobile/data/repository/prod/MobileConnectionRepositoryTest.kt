@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
+import android.platform.test.annotations.EnableFlags
 import android.telephony.AccessNetworkConstants.TRANSPORT_TYPE_WLAN
 import android.telephony.AccessNetworkConstants.TRANSPORT_TYPE_WWAN
 import android.telephony.CarrierConfigManager.KEY_INFLATE_SIGNAL_STRENGTH_BOOL
@@ -70,7 +71,6 @@ import com.android.systemui.coroutines.collectLastValue
 import com.android.systemui.flags.FakeFeatureFlagsClassic
 import com.android.systemui.flags.Flags.ROAMING_INDICATOR_VIA_DISPLAY_INFO
 import com.android.systemui.log.table.TableLogBuffer
-import com.android.systemui.statusbar.pipeline.ims.data.repository.ImsRepositoryImpl
 import com.android.systemui.statusbar.pipeline.mobile.data.MobileInputLogger
 import com.android.systemui.statusbar.pipeline.mobile.data.model.DataConnectionState
 import com.android.systemui.statusbar.pipeline.mobile.data.model.NetworkNameModel
@@ -124,7 +124,6 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
     @Mock private lateinit var logger: MobileInputLogger
     @Mock private lateinit var tableLogger: TableLogBuffer
     @Mock private lateinit var context: Context
-    private val imsRepo = mock<ImsRepositoryImpl>()
 
     private val mobileMappings = FakeMobileMappingsProxy()
     private val systemUiCarrierConfig =
@@ -169,7 +168,6 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
                 tableLogger,
                 flags,
                 testScope.backgroundScope,
-                imsRepo
             )
     }
 
@@ -644,7 +642,6 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
                     tableLogger,
                     flags,
                     testScope.backgroundScope,
-                    imsRepo,
                 )
 
             var latest: Boolean? = null
@@ -694,7 +691,6 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
                     tableLogger,
                     flags,
                     testScope.backgroundScope,
-                    imsRepo,
                 )
 
             var latest: Boolean? = null
@@ -872,6 +868,24 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
         }
 
     @Test
+    fun networkName_usingEagerStrategy_retainsNameBetweenSubscribers() =
+        testScope.runTest {
+            // Use the [StateFlow.value] getter so we can prove that the collection happens
+            // even when there is no [Job]
+
+            // Starts out default
+            assertThat(underTest.networkName.value).isEqualTo(DEFAULT_NAME_MODEL)
+
+            val intent = spnIntent()
+            val captor = argumentCaptor<BroadcastReceiver>()
+            verify(context).registerReceiver(captor.capture(), any())
+            captor.value!!.onReceive(context, intent)
+
+            // The value is still there despite no active subscribers
+            assertThat(underTest.networkName.value).isEqualTo(intent.toNetworkNameModel(SEP))
+        }
+
+    @Test
     fun operatorAlphaShort_tracked() =
         testScope.runTest {
             var latest: String? = null
@@ -968,6 +982,31 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
         }
 
     @Test
+    @EnableFlags(com.android.internal.telephony.flags.Flags.FLAG_CARRIER_ENABLED_SATELLITE_FLAG)
+    fun isNonTerrestrial_updatesFromServiceState() =
+        testScope.runTest {
+            val latest by collectLastValue(underTest.isNonTerrestrial)
+
+            // Lambda makes it a little clearer what we are testing IMO
+            val serviceStateCreator = { ntn: Boolean ->
+                mock<ServiceState>().also {
+                    whenever(it.isUsingNonTerrestrialNetwork).thenReturn(ntn)
+                }
+            }
+
+            // Starts out false
+            assertThat(latest).isFalse()
+
+            getTelephonyCallbackForType<ServiceStateListener>()
+                .onServiceStateChanged(serviceStateCreator(true))
+            assertThat(latest).isTrue()
+
+            getTelephonyCallbackForType<ServiceStateListener>()
+                .onServiceStateChanged(serviceStateCreator(false))
+            assertThat(latest).isFalse()
+        }
+
+    @Test
     fun numberOfLevels_usesCarrierConfig() =
         testScope.runTest {
             var latest: Int? = null
@@ -988,6 +1027,26 @@ class MobileConnectionRepositoryTest : SysuiTestCase() {
             assertThat(latest).isEqualTo(DEFAULT_NUM_LEVELS)
 
             job.cancel()
+        }
+
+    @Test
+    fun inflateSignalStrength_usesCarrierConfig() =
+        testScope.runTest {
+            val latest by collectLastValue(underTest.inflateSignalStrength)
+
+            assertThat(latest).isEqualTo(false)
+
+            systemUiCarrierConfig.processNewCarrierConfig(
+                configWithOverride(KEY_INFLATE_SIGNAL_STRENGTH_BOOL, true)
+            )
+
+            assertThat(latest).isEqualTo(true)
+
+            systemUiCarrierConfig.processNewCarrierConfig(
+                configWithOverride(KEY_INFLATE_SIGNAL_STRENGTH_BOOL, false)
+            )
+
+            assertThat(latest).isEqualTo(false)
         }
 
     @Test

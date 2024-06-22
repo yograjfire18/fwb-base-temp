@@ -58,6 +58,7 @@ final class DisplayPowerState {
     private final Handler mHandler;
     private final Choreographer mChoreographer;
     private final DisplayBlanker mBlanker;
+    private final ColorFade mColorFade;
     private final PhotonicModulator mPhotonicModulator;
     private final int mDisplayId;
 
@@ -76,14 +77,12 @@ final class DisplayPowerState {
 
     private volatile boolean mStopped;
 
-    private ScreenStateAnimator mColorFade;
-
     DisplayPowerState(
-            DisplayBlanker blanker, int screenAnimatorMode, int displayId, int displayState) {
+            DisplayBlanker blanker, ColorFade colorFade, int displayId, int displayState) {
         mHandler = new Handler(true /*async*/);
         mChoreographer = Choreographer.getInstance();
         mBlanker = blanker;
-        setScreenStateAnimator(screenAnimatorMode);
+        mColorFade = colorFade;
         mPhotonicModulator = new PhotonicModulator();
         mPhotonicModulator.start();
         mDisplayId = displayId;
@@ -102,26 +101,6 @@ final class DisplayPowerState {
         mColorFadePrepared = false;
         mColorFadeLevel = 1.0f;
         mColorFadeReady = true;
-    }
-
-    public void setScreenStateAnimator(int mode) {
-        cleanUpColorFade();
-        if (mode == DisplayPowerController.SCREEN_OFF_FADE) {
-            mColorFade = new ColorFade(Display.DEFAULT_DISPLAY);
-        } else {
-            mColorFade = new ElectronBeam(Display.DEFAULT_DISPLAY);
-        }
-    }
-    
-    public void cleanUpColorFade() {
-        if (mColorFade != null) {
-            // only Color Fade screen animator has destroy interface
-            if (mColorFade instanceof ColorFade) {
-                ((ColorFade) mColorFade).destroy();
-            } else {
-                mColorFade.dismiss();
-            }
-        }
     }
 
     public static final FloatProperty<DisplayPowerState> COLOR_FADE_LEVEL =
@@ -266,7 +245,7 @@ final class DisplayPowerState {
      */
     public void dismissColorFade() {
         Trace.traceCounter(Trace.TRACE_TAG_POWER, COUNTER_COLOR_FADE, 100);
-        cleanUpColorFade();
+        if (mColorFade != null) mColorFade.dismiss();
         mColorFadePrepared = false;
         mColorFadeReady = true;
     }
@@ -341,7 +320,9 @@ final class DisplayPowerState {
     public void stop() {
         mStopped = true;
         mPhotonicModulator.interrupt();
-        cleanUpColorFade();
+        if (mColorFade != null) {
+            mColorFade.destroy();
+        }
         mCleanListener = null;
         mHandler.removeCallbacksAndMessages(null);
     }

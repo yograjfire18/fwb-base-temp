@@ -246,7 +246,12 @@ object Flags {
         )
 
     // TODO(b/254512383): Tracking Bug
-    @JvmField val FULL_SCREEN_USER_SWITCHER = sysPropBooleanFlag("persist.sys.flags.enableBouncerUserSwitcher", default = true)
+    @JvmField
+    val FULL_SCREEN_USER_SWITCHER =
+        resourceBooleanFlag(
+            R.bool.config_enableFullscreenUserSwitcher,
+            "full_screen_user_switcher"
+        )
 
     // TODO(b/244064524): Tracking Bug
     @JvmField val QS_SECONDARY_DATA_SUB_INFO = releasedFlag("qs_secondary_data_sub_info")

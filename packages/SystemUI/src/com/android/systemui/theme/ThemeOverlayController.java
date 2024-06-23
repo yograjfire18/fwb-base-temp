@@ -62,12 +62,10 @@ import android.util.ArraySet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-import com.android.systemui.res.R;
 import com.android.internal.graphics.ColorUtils;
 import com.android.internal.derp.app.ParallelSpaceManager;
 import com.android.systemui.CoreStartable;
@@ -636,18 +634,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                 },
                 UserHandle.USER_ALL);
 
-        mSecureSettings.registerContentObserverForUser(
-                Settings.Secure.getUriFor(Settings.Secure.PREF_KG_USER_SWITCHER),
-                false,
-                new ContentObserver(mBgHandler) {
-                    @Override
-                    public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
-                            int userId) {
-                        restartSystemUI();
-                    }
-                },
-                UserHandle.USER_ALL);
-
         if (!mIsMonetEnabled) {
             return;
         }
@@ -723,18 +709,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                 }
             });
         }
-    }
-
-    private void restartSystemUI() {
-        Toast toast = Toast.makeText(mContext, R.string.restarting_systemui_msg, Toast.LENGTH_SHORT);
-        toast.show();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                android.os.Process.killProcess(android.os.Process.myPid());
-            }
-        }, toast.getDuration() + 2000);
     }
 
     @Override

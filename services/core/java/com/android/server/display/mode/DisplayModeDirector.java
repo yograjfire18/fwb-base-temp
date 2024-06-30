@@ -849,8 +849,6 @@ public class DisplayModeDirector {
                 Settings.Global.getUriFor(Settings.Global.LOW_POWER_MODE);
         private final Uri mMatchContentFrameRateSetting =
                 Settings.Secure.getUriFor(Settings.Secure.MATCH_CONTENT_FRAME_RATE);
-        private final Uri mLowPowerRefreshRateSetting =
-                Settings.System.getUriFor(Settings.System.LOW_POWER_REFRESH_RATE);
 
         private final boolean mVsynLowPowerVoteEnabled;
 
@@ -892,8 +890,6 @@ public class DisplayModeDirector {
                     UserHandle.USER_SYSTEM);
             cr.registerContentObserver(mMatchContentFrameRateSetting, false /*notifyDescendants*/,
                     this);
-            cr.registerContentObserver(mLowPowerRefreshRateSetting, false /*notifyDescendants*/, this,
-                    UserHandle.USER_SYSTEM);
 
             float deviceConfigDefaultPeakRefresh =
                     mConfigParameterProvider.getPeakRefreshRateDefault();
@@ -932,8 +928,7 @@ public class DisplayModeDirector {
             synchronized (mLock) {
                 if (mPeakRefreshRateSetting.equals(uri) || mMinRefreshRateSetting.equals(uri)) {
                     updateRefreshRateSettingLocked();
-                } else if (mLowPowerModeSetting.equals(uri)
-                        || mLowPowerRefreshRateSetting.equals(uri)) {
+                } else if (mLowPowerModeSetting.equals(uri)) {
                     updateLowPowerModeSettingLocked();
                 } else if (mMatchContentFrameRateSetting.equals(uri)) {
                     updateModeSwitchingTypeSettingLocked();
@@ -974,10 +969,8 @@ public class DisplayModeDirector {
         private void updateLowPowerModeSettingLocked() {
             boolean inLowPowerMode = Settings.Global.getInt(mContext.getContentResolver(),
                     Settings.Global.LOW_POWER_MODE, 0 /*default*/) != 0;
-            boolean shouldSwitchRefreshRate = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LOW_POWER_REFRESH_RATE, 1 /*default*/) != 0;
             final Vote vote;
-            if (inLowPowerMode && mVsynLowPowerVoteEnabled || shouldSwitchRefreshRate) {
+            if (inLowPowerMode && mVsynLowPowerVoteEnabled) {
                 vote = Vote.forSupportedModes(List.of(
                         new SupportedModesVote.SupportedMode(/* peakRefreshRate= */ 60f,
                                 /* vsyncRate= */ 240f),

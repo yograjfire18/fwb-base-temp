@@ -342,7 +342,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
         }
         iconContainer.setPaddingRelative(padding, padding, padding, padding)
         (labelContainer.layoutParams as MarginLayoutParams).apply {
-            topMargin = padding / 2
+            topMargin = padding * 10 / 34  //  (padding / 3.4)
         }
     }
 

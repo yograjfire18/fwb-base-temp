@@ -168,6 +168,11 @@ class IslandView : ExtendedFloatingActionButton {
         this.headsUpManager = headsUp
     }
 
+    private fun removeHun() {
+        val key = headsUpManager?.getTopEntry()?.row?.entry?.key ?: return
+        headsUpManager?.removeNotification(key, true /* releaseImmediately */, false)
+    }
+
     fun showIsland(show: Boolean, expandedFraction: Float) {
         if (show) {
             animateShowIsland(expandedFraction)
@@ -487,6 +492,8 @@ class IslandView : ExtendedFloatingActionButton {
                             translationX = 0f
                             alpha = 1f
                             isDismissed = true
+                            removeHun()
+                            removeInsetsListener()
                             isIslandAnimating = false
                         }
                     } else {
@@ -511,6 +518,8 @@ class IslandView : ExtendedFloatingActionButton {
             visibility = View.GONE
             translationX = 0f
             isDismissed = true
+            removeHun()
+            removeInsetsListener()
             isIslandAnimating = false
         }
         animator.start()
